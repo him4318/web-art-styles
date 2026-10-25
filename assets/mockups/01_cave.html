@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orbit · Cave painting</title>
+<!-- Web art style mockup: Cave painting (01_cave). Self-contained: only Google Fonts are external.
+     Reference size 1280x800. Append #thinking to the URL for the loader state.
+     Add -still / #still to the hash to skip one-shot entrance animations (used for the PNG captures). -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;800&family=Geist+Mono:wght@400;500&family=Kalam:wght@400;700&display=swap">
+<style>
+/* ---------- shared app skeleton (identical in every mockup; 1280x800 reference) ---------- */
+*, *::before, *::after { box-sizing: border-box }
+html, body { margin: 0; height: 100%; }
+body { overflow: hidden; font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+:root {
+  --sans: "Geist", ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+  --mono: "Geist Mono", ui-monospace, Consolas, monospace;
+  --serif: "Instrument Serif", Georgia, "Times New Roman", serif;
+}
+.screen { position: relative; overflow: hidden; width: 100vw; height: 100vh; min-height: 640px; isolation: isolate; }
+.app { position: relative; z-index: 2; display: grid; grid-template-columns: 220px 1fr; height: 100%; }
+.side { display: flex; flex-direction: column; gap: 6px; padding: 22px 16px; font-size: 15px; min-width: 0; position: relative; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 20px; margin-bottom: 14px; }
+.brand svg { width: 30px; height: 30px; flex: none }
+.site { font-size: 14px; padding: 9px 12px; margin-bottom: 10px; display: flex; justify-content: space-between; }
+.nav { padding: 9px 12px; display: flex; justify-content: space-between; align-items: center; }
+.nav .n { font: 500 12.5px var(--mono); }
+.credits { margin-top: auto; font: 500 12.5px var(--mono); padding: 10px 12px; }
+.main { display: flex; flex-direction: column; min-width: 0; padding: 38px 44px 26px; gap: 18px; overflow: hidden; position: relative; }
+.main > * { width: 100%; max-width: var(--col, 880px); }
+.thread { flex: 1; display: flex; flex-direction: column; gap: 26px; min-height: 0; }
+.pin { display: block; }
+.u { margin-left: auto; width: fit-content; max-width: 70%; font-size: 17px; padding: 13px 20px; }
+.turn { display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: start; min-width: 0; }
+.mascot { width: 44px; height: 44px; display: block; }
+.body { display: grid; gap: 16px; min-width: 0; }
+.tools { display: flex; flex-wrap: wrap; gap: 8px; }
+.tool { font: 500 13px var(--mono); padding: 6px 12px; display: inline-flex; gap: 7px; align-items: center; }
+.reply { font-size: 17.5px; line-height: 1.55; padding: 22px 26px; }
+.reply h3 { margin: 0 0 6px; }
+.reply p { margin: 0 0 10px }
+.reply table { width: 100%; border-collapse: collapse; font-size: 16px; }
+.reply td { padding: 9px 12px 9px 0; vertical-align: top; }
+.reply td:first-child { white-space: nowrap; font-weight: 600; padding-right: 22px; width: 1%; }
+.fix { padding: 20px 26px; display: grid; gap: 14px; font-size: 17px; position: relative; }
+.fix .lbl { font: 500 12px var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+.item { display: grid; grid-template-columns: 20px 1fr auto; gap: 12px; align-items: center; position: relative; }
+.box { width: 18px; height: 18px; display: block; }
+.ti { display: none; }
+.tag { font: 500 12px var(--mono); padding: 2px 9px; }
+.composer { font-size: 16px; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+.send { width: 34px; height: 34px; display: grid; place-items: center; flex: none; }
+.loader { display: none; align-items: center; gap: 14px; font-size: 15.5px; min-height: 40px; }
+[data-state="thinking"] .loader { display: flex; }
+[data-state="thinking"] .reply, [data-state="thinking"] .fix, [data-state="thinking"] .next { display: none; }
+.next .tool { cursor: pointer; }
+/* ================= Cave painting ================= */
+.E { --chalk: #efdfc0; --char: #21150d; --ochre: #9c3520; --ochreY: #cf8f2c; --txtE: #24170e;
+  background: #6e4426; color: var(--txtE); }
+.E .rock { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; }
+.E .vig { position: absolute; inset: 0; z-index: 1; pointer-events: none; background: radial-gradient(75% 70% at 55% 50%, transparent 35%, rgba(20,10,4,.82)); }
+.E .fire { position: absolute; inset: 0; z-index: 1; pointer-events: none; mix-blend-mode: overlay; opacity: .6;
+  background: radial-gradient(60% 55% at var(--fx, 55%) var(--fy, 70%), rgba(255,170,70,.9), transparent 70%); }
+.E canvas.embers { position: absolute; inset: 0; z-index: 3; pointer-events: none; width: 100%; height: 100%; }
+.E .stencil { position: absolute; right: 40px; top: 30px; width: 130px; z-index: 1; opacity: .55; animation: glowh 3.4s ease-in-out infinite; }
+.E .herd { position: absolute; right: 14px; bottom: 210px; width: 120px; z-index: 1; opacity: .7; }
+@keyframes glowh { 50% { opacity: .35 } }
+.E .painted { position: relative; isolation: isolate; }
+.E .painted::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--pf, rgba(239,223,192,.9)); border-radius: 22px 30px 16px 36px / 28px 18px 32px 16px; filter: url(#pig); }
+.E .painted::after { content: ""; position: absolute; inset: -1px; z-index: -1; border: 3.2px solid var(--char); border-radius: 22px 30px 16px 36px / 28px 18px 32px 16px; filter: url(#char); pointer-events: none; }
+.E .side { color: var(--chalk); text-shadow: 0 1px 0 rgba(0,0,0,.5); }
+.E .brand span { font-family: "Kalam", var(--sans); font-weight: 700; font-size: 26px; letter-spacing: .05em; color: #f3c27a; }
+.E .site { --pf: rgba(239,223,192,.18); }
+.E .site::after { border-color: rgba(239,223,192,.5) }
+.E .nav.on { color: var(--txtE); --pf: rgba(207,143,44,.92); font-weight: 600; text-shadow: none; }
+.E .nav .n { font-family: "Kalam", var(--sans); font-size: 14px; color: #f3c27a; letter-spacing: 1px; }
+.E .credits { color: #f3c27a }
+.E .u { font-weight: 500; padding: 14px 22px; }
+.E .tool { --pf: rgba(239,223,192,.78); padding: 5px 13px; }
+.E .tool .ti { display: block; width: 12px; height: 3px; background: var(--char); border-radius: 2px; box-shadow: 0 -5px 0 var(--char); margin-top: 5px; }
+.E .tool.run .ti { width: 10px; height: 10px; margin: 0; border-radius: 50%; background: var(--ochre); box-shadow: none; animation: pulse .9s infinite; }
+.E .item.done .box { background: var(--ochre); }
+.E .next .tool { --pf: rgba(207,143,44,.8); font-family: "Kalam", var(--sans); font-size: 15px; font-weight: 700; padding: 4px 14px; }
+@keyframes pulse { 50% { opacity: .2 } }
+.E .reply { padding: 22px 28px; }
+.E .reply h3 { font-family: "Kalam", var(--serif); font-weight: 700; font-size: 32px; margin: 0 0 2px; line-height: 1.1; color: var(--ochre); }
+.E .reply td { border-top: 2px dashed rgba(33,21,13,.35); }
+.E .fix { --pf: rgba(207,143,44,.88); padding: 20px 28px; }
+.E .fix .lbl { color: var(--char); font-family: "Kalam", var(--sans); font-weight: 700; font-size: 16px; letter-spacing: .08em; }
+.E .box { border: 2.5px solid var(--char); border-radius: 40% 55% 45% 50%; filter: url(#char); }
+.E .item.done .t2 { opacity: .65 }
+.E .hand { position: absolute; left: -16px; top: -24px; width: 54px; height: 62px; opacity: .92; animation: press .5s cubic-bezier(.2,1.4,.4,1) .9s both; pointer-events: none; display: block; }
+.E .hand svg { width: 100%; height: 100%; display: block; }
+@keyframes press { from { transform: scale(1.8) rotate(-12deg); opacity: 0 } }
+.E .tag { font-family: "Kalam", var(--mono); font-size: 14px; font-weight: 700; color: var(--char); }
+.E .composer { --pf: rgba(239,223,192,.9); color: #6b4a2e; }
+.E .send { background: var(--ochre); color: var(--chalk); border-radius: 46% 54% 50% 50%; font-weight: 700; }
+.E .loader .beast { width: 84px; height: 40px; }
+.E .loader .beast g { animation: pose .24s steps(1) infinite; }
+.E .loader .beast g.p2 { animation-delay: -.12s }
+@keyframes pose { 0% { opacity: 1 } 50% { opacity: 0 } }
+.E .loader span { font-family: "Kalam", var(--sans); color: var(--chalk); font-size: 20px; text-shadow: 0 1px 0 rgba(0,0,0,.6) }
+.E .mascot g { animation: hop .58s steps(2) infinite; }
+@keyframes hop { 50% { transform: translateY(-2px) } }
+@media (prefers-reduced-motion: reduce) { .screen *, .screen *::before, .screen *::after { animation: none !important; } }
+</style>
+</head>
+<body data-state="done">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><filter id="pig" x="-10%" y="-10%" width="120%" height="120%">
+  <feTurbulence type="fractalNoise" baseFrequency=".06" numOctaves="3" seed="21" result="n"/>
+  <feDisplacementMap in="SourceGraphic" in2="n" scale="7" result="d"/>
+  <feTurbulence type="fractalNoise" baseFrequency="1.1" seed="4" result="s"/>
+  <feColorMatrix in="s" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -2 1.75" result="holes"/>
+  <feComposite in="d" in2="holes" operator="in"/>
+</filter>
+<filter id="char" x="-10%" y="-10%" width="120%" height="120%">
+  <feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="2" seed="1" result="n">
+    <animate attributeName="seed" values="1;5;9;3" dur=".44s" calcMode="discrete" repeatCount="indefinite"/>
+  </feTurbulence>
+  <feDisplacementMap in="SourceGraphic" in2="n" scale="3.2" result="d"/>
+  <feColorMatrix in="n" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -2.2 1.9" result="m"/>
+  <feComposite in="d" in2="m" operator="in"/>
+</filter>
+<filter id="rockf" x="0" y="0" width="100%" height="100%">
+  <feTurbulence type="fractalNoise" baseFrequency=".005 .008" numOctaves="5" seed="7" result="h"/>
+  <feDiffuseLighting in="h" surfaceScale="13" diffuseConstant="1.05" lighting-color="#e0a46a" result="lit">
+    <feDistantLight azimuth="225" elevation="38"/>
+  </feDiffuseLighting>
+  <feTurbulence type="fractalNoise" baseFrequency=".003" numOctaves="2" seed="15" result="c"/>
+  <feColorMatrix in="c" values="0 0 0 0 .72 0 0 0 0 .39 0 0 0 0 .22 0 0 0 1.4 -.55" result="red"/>
+  <feBlend in="red" in2="lit" mode="multiply" result="r1"/>
+  <feTurbulence type="fractalNoise" baseFrequency=".9" seed="2" result="g"/>
+  <feColorMatrix in="g" values="0 0 0 0 .1 0 0 0 0 .06 0 0 0 0 .03 0 0 0 -1.8 1.05" result="grain"/>
+  <feComposite in="grain" in2="r1" operator="over"/>
+</filter>
+<mask id="handE"><rect width="80" height="90" fill="#fff"/><path fill="#000" d="M30 86 26 58 14 40c-3-5 3-9 7-4l9 11-6-30c-1-6 7-7 8-1l5 24 1-30c0-6 8-6 8 0l1 30 4-25c1-6 9-5 8 1l-4 28 5-15c2-5 9-3 7 3l-7 26-4 18Z"/></mask>
+<radialGradient id="sprayE"><stop offset="0" stop-color="#9c3520" stop-opacity=".95"/><stop offset=".7" stop-color="#9c3520" stop-opacity=".6"/><stop offset="1" stop-color="#9c3520" stop-opacity="0"/></radialGradient></defs></svg>
+<div class="screen E">
+  <svg class="rock" aria-hidden="true" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#rockf)"/></svg>
+  <div class="fire" aria-hidden="true"></div>
+  <div class="vig" aria-hidden="true"></div>
+  <svg class="stencil" viewBox="0 0 80 90" aria-hidden="true"><ellipse cx="40" cy="48" rx="40" ry="44" fill="url(#sprayE)" mask="url(#handE)" filter="url(#pig)"/></svg>
+  <svg class="herd" viewBox="0 0 120 60" aria-hidden="true" filter="url(#char)">
+    <g fill="none" stroke="#21150d" stroke-width="2.2" stroke-linecap="round"><path d="M10 30c6-8 26-9 40-6 8 1 12-1 16 2 3 2 4 7 0 8l-5 1c-6 4-20 5-30 4-9 0-16-3-21-9Z" fill="#9c3520" fill-opacity=".75"/><path d="M18 38 12 50M26 39l3 11M50 38l-6 12M58 37l6 11M64 26l6-6M66 27l8-2"/></g>
+    <g fill="none" stroke="#21150d" stroke-width="1.8" stroke-linecap="round" transform="translate(64 16) scale(.6)"><path d="M10 30c6-8 26-9 40-6 8 1 12-1 16 2 3 2 4 7 0 8l-5 1c-6 4-20 5-30 4-9 0-16-3-21-9Z" fill="#cf8f2c" fill-opacity=".7"/><path d="M18 38 12 50M26 39l3 11M50 38l-6 12M58 37l6 11"/></g>
+  </svg>
+  <canvas class="embers" aria-hidden="true"></canvas>
+  <div class="app">
+    <aside class="side ">
+      <div class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="8" fill="#cf8f2c" stroke="#21150d" stroke-width="2" filter="url(#char)"/><ellipse cx="16" cy="16" rx="14" ry="5" fill="none" stroke="#efdfc0" stroke-width="2" transform="rotate(-20 16 16)" filter="url(#char)"/></svg><span>ORBIT</span></div>
+      <div class="site painted"><span class="t">yourbrand.in</span><span class="t">&#9662;</span></div>
+      <div class="nav on painted"><span class="t">Chat</span></div>
+      <div class="nav"><span class="t">Action plan</span><span class="n">||||| ||||| |</span></div>
+      <div class="nav"><span class="t">Documents</span><span class="n">||||</span></div>
+      <div class="nav"><span class="t">Playbooks</span></div>
+      <div class="nav"><span class="t">Sites</span></div>
+      <div class="credits">81 credits</div>
+    </aside>
+    <main class="main">
+      <div class="thread">
+        <div class="pin"><div class="u painted">Why did my traffic drop last month?</div></div>
+        <div class="turn">
+          <svg class="mascot" viewBox="0 0 32 32" aria-hidden="true"><g>
+  <path fill="#9c3520" stroke="#21150d" stroke-width="2.2" filter="url(#char)" d="M16 3C8.8 3 3 8.2 3 14.6c0 3.5 1.7 6.6 4.5 8.7L6 29l6.4-3.4c1.1.3 2.4.4 3.6.4 7.2 0 13-5.2 13-11.4S23.2 3 16 3Z"/>
+  <path d="M10 14.5q2-2.4 4 0M18 14.5q2-2.4 4 0" stroke="#efdfc0" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="16" cy="19.5" r="1.6" fill="#efdfc0"/>
+</g></svg>
+          <div class="body">
+            <div class="tools"><span class="tool ok painted"><i class="ti"></i>Search Console</span><span class="tool ok painted"><i class="ti"></i>SERP analysis</span><span class="tool run painted"><i class="ti"></i>Competitor pages</span></div>
+            <div class="loader"><svg class="beast" viewBox="0 0 58 28" aria-hidden="true">
+  <g class="p1" filter="url(#char)"><path fill="#9c3520" stroke="#21150d" stroke-width="1.6" d="M8 12c4-6 18-7 28-5 6 1 9-1 12 1 3 2 4 6 1 7l-4 1c-4 3-14 4-22 3-6 0-12-2-15-7Z"/><path d="M14 18 9 26M20 19l2 7M36 18l-5 8M42 17l5 8" stroke="#21150d" stroke-width="1.8" stroke-linecap="round"/></g>
+  <g class="p2" filter="url(#char)"><path fill="#9c3520" stroke="#21150d" stroke-width="1.6" d="M8 13c4-6 18-7 28-5 6 1 9-1 12 1 3 2 4 6 1 7l-4 1c-4 3-14 4-22 3-6 0-12-2-15-7Z"/><path d="M14 19l3 7M20 20l-4 6M36 19l3 7M42 18l-2 8" stroke="#21150d" stroke-width="1.8" stroke-linecap="round"/></g>
+</svg><span>Tracking the herd&hellip;</span></div>
+            <div class="pin"><div class="reply painted">
+              <h3>Clicks fell 23%</h3>
+              <p>It isn't a penalty. Two of your pages compete for the same search, and the server is slow to answer.</p>
+              <table><tbody>
+                <tr><td>Pages competing</td><td>/blog/ai-receptionist and /compare target the same query</td></tr>
+                <tr><td>Speed</td><td>Server waits 1.8 s before sending the page</td></tr>
+                <tr><td>Lost rankings</td><td>&ldquo;ai receptionist&rdquo; slipped from #4 to #11 on mobile</td></tr>
+              </tbody></table>
+            </div></div>
+            <div class="pin"><div class="fix painted">
+              <span class="lbl">Fix this week</span>
+              <div class="item done"><span class="box "></span><span class="t2">Merge the two competing pages</span><span class="tag t-high">High</span><span class="hand" aria-hidden="true"><svg viewBox="0 0 80 90"><path fill="#9c3520" filter="url(#pig)" d="M30 86 26 58 14 40c-3-5 3-9 7-4l9 11-6-30c-1-6 7-7 8-1l5 24 1-30c0-6 8-6 8 0l1 30 4-25c1-6 9-5 8 1l-4 28 5-15c2-5 9-3 7 3l-7 26-4 18Z"/></svg></span></div>
+              <div class="item"><span class="box"></span><span class="t2">Add FAQ schema to pricing</span><span class="tag t-aeo">AEO</span></div>
+              <div class="item"><span class="box"></span><span class="t2">Compress hero images</span><span class="tag t-speed">Speed</span></div>
+            </div></div>
+            <div class="tools next"><span class="tool sug painted">Show both pages</span><span class="tool sug painted">Draft the redirect</span><span class="tool sug painted">Check speed again</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="pin"><div class="composer painted"><span>Ask in English or Hinglish&hellip;</span><span class="send">&#8593;</span></div></div>
+    </main>
+  </div>
+
+</div>
+<script>
+(() => {
+  // State: "done" by default; open with #thinking to see the loader state.
+  // Add "still" to the hash (#still, #thinking-still) to jump one-shot entrances to their end, for screenshots.
+  const state = location.hash.includes("thinking") ? "thinking" : "done";
+  document.body.dataset.state = state;
+  if (state === "done") document.querySelectorAll(".tool.run").forEach(t => t.classList.replace("run", "ok"));
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (location.hash.includes("still")) requestAnimationFrame(() => document.getAnimations().forEach(a => {
+    if (a.effect && a.effect.getComputedTiming().iterations !== Infinity) a.finish();
+  }));
+  function rand(seed) { return () => ((seed = (seed * 16807) % 2147483647) / 2147483647); }
+  // Firelight wanders and flickers; embers rise from the bottom.
+  const fire = document.querySelector(".E .fire");
+  const ev = document.querySelector(".E canvas.embers"), ex = ev.getContext("2d");
+  let EW = 0, EH = 0, embers = [];
+  function esize() {
+    const r = ev.getBoundingClientRect(), d = Math.min(2, devicePixelRatio || 1);
+    EW = r.width; EH = r.height; ev.width = EW * d; ev.height = EH * d; ex.setTransform(d, 0, 0, d, 0, 0);
+    const rr = rand(13);
+    embers = Array.from({ length: 70 }, () => ({ x: rr() * EW, y: EH * (0.4 + rr() * 0.7), r: 0.9 + rr() * 1.8, v: 0.25 + rr() * 0.5, p: rr() * 6.28 }));
+  }
+  const n1 = t => Math.sin(t * 1.7) * 0.5 + Math.sin(t * 4.3 + 1) * 0.3 + Math.sin(t * 9.1 + 2) * 0.2;
+  function edraw(t) {
+    const s = t / 1000;
+    fire.style.setProperty("--fx", (55 + n1(s * 0.9) * 8).toFixed(1) + "%");
+    fire.style.setProperty("--fy", (72 + n1(s * 0.7 + 3) * 5).toFixed(1) + "%");
+    fire.style.opacity = (0.5 + 0.18 * n1(s * 3.1 + 5)).toFixed(2);
+    ex.clearRect(0, 0, EW, EH);
+    ex.globalCompositeOperation = "lighter";
+    for (const m of embers) {
+      const a = (0.3 + 0.7 * Math.abs(Math.sin(s * 6 + m.p))) * Math.min(1, m.y / (EH * 0.5));
+      const g = ex.createRadialGradient(m.x, m.y, 0, m.x, m.y, m.r * 3.6);
+      g.addColorStop(0, `rgba(255,190,90,${a})`); g.addColorStop(1, "rgba(255,120,40,0)");
+      ex.fillStyle = g; ex.beginPath(); ex.arc(m.x, m.y, m.r * 3.6, 0, 6.29); ex.fill();
+      if (!reduce) { m.y -= m.v; m.x += Math.sin(s * 1.3 + m.p) * 0.3; if (m.y < 0) { m.y = EH + 4; m.x = Math.random() * EW; } }
+    }
+    ex.globalCompositeOperation = "source-over";
+    if (!reduce) requestAnimationFrame(edraw);
+  }
+  esize(); addEventListener("resize", esize); requestAnimationFrame(edraw);
+})();
+</script>
+</body>
+</html>

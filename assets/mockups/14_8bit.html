@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orbit · 8-bit</title>
+<!-- Web art style mockup: 8-bit (14_8bit). Self-contained: only Google Fonts are external.
+     Reference size 1280x800. Append #thinking to the URL for the loader state.
+     Add -still / #still to the hash to skip one-shot entrance animations (used for the PNG captures). -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap">
+<style>
+/* ---------- shared app skeleton (identical in every mockup; 1280x800 reference) ---------- */
+*, *::before, *::after { box-sizing: border-box }
+html, body { margin: 0; height: 100%; }
+body { overflow: hidden; font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+:root {
+  --sans: "Geist", ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+  --mono: "Geist Mono", ui-monospace, Consolas, monospace;
+  --serif: "Instrument Serif", Georgia, "Times New Roman", serif;
+}
+.screen { position: relative; overflow: hidden; width: 100vw; height: 100vh; min-height: 640px; isolation: isolate; }
+.app { position: relative; z-index: 2; display: grid; grid-template-columns: 220px 1fr; height: 100%; }
+.side { display: flex; flex-direction: column; gap: 6px; padding: 22px 16px; font-size: 15px; min-width: 0; position: relative; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 20px; margin-bottom: 14px; }
+.brand svg { width: 30px; height: 30px; flex: none }
+.site { font-size: 14px; padding: 9px 12px; margin-bottom: 10px; display: flex; justify-content: space-between; }
+.nav { padding: 9px 12px; display: flex; justify-content: space-between; align-items: center; }
+.nav .n { font: 500 12.5px var(--mono); }
+.credits { margin-top: auto; font: 500 12.5px var(--mono); padding: 10px 12px; }
+.main { display: flex; flex-direction: column; min-width: 0; padding: 38px 44px 26px; gap: 18px; overflow: hidden; position: relative; }
+.main > * { width: 100%; max-width: var(--col, 880px); }
+.thread { flex: 1; display: flex; flex-direction: column; gap: 26px; min-height: 0; }
+.pin { display: block; }
+.u { margin-left: auto; width: fit-content; max-width: 70%; font-size: 17px; padding: 13px 20px; }
+.turn { display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: start; min-width: 0; }
+.mascot { width: 44px; height: 44px; display: block; }
+.body { display: grid; gap: 16px; min-width: 0; }
+.tools { display: flex; flex-wrap: wrap; gap: 8px; }
+.tool { font: 500 13px var(--mono); padding: 6px 12px; display: inline-flex; gap: 7px; align-items: center; }
+.reply { font-size: 17.5px; line-height: 1.55; padding: 22px 26px; }
+.reply h3 { margin: 0 0 6px; }
+.reply p { margin: 0 0 10px }
+.reply table { width: 100%; border-collapse: collapse; font-size: 16px; }
+.reply td { padding: 9px 12px 9px 0; vertical-align: top; }
+.reply td:first-child { white-space: nowrap; font-weight: 600; padding-right: 22px; width: 1%; }
+.fix { padding: 20px 26px; display: grid; gap: 14px; font-size: 17px; position: relative; }
+.fix .lbl { font: 500 12px var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+.item { display: grid; grid-template-columns: 20px 1fr auto; gap: 12px; align-items: center; position: relative; }
+.box { width: 18px; height: 18px; display: block; }
+.ti { display: none; }
+.tag { font: 500 12px var(--mono); padding: 2px 9px; }
+.composer { font-size: 16px; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+.send { width: 34px; height: 34px; display: grid; place-items: center; flex: none; }
+.loader { display: none; align-items: center; gap: 14px; font-size: 15.5px; min-height: 40px; }
+[data-state="thinking"] .loader { display: flex; }
+[data-state="thinking"] .reply, [data-state="thinking"] .fix, [data-state="thinking"] .next { display: none; }
+.next .tool { cursor: pointer; }
+/* ================= 8-bit ================= */
+.F { --sky: #5c94fc; --k: #000; --w: #fcfcfc; --gold: #f8b800; --red: #d82800; --grn: #00a800; --col: 860px;
+  background: var(--sky); color: var(--w); font-family: "VT323", var(--mono); image-rendering: pixelated; }
+.F .px { display: block; shape-rendering: crispEdges; }
+.F .cloudpx { position: absolute; z-index: 1; left: 0; animation: stepl 70s steps(280) infinite; }
+.F .cloudpx.c2 { animation-duration: 90s; animation-delay: -5.4s; }
+.F .cloudpx.c3 { animation-duration: 80s; animation-delay: -40s; }
+@keyframes stepl { from { transform: translateX(1300px) } to { transform: translateX(-160px) } }
+.F .hill { position: absolute; right: 70px; bottom: 48px; z-index: 1; }
+.F .bush { position: absolute; right: 330px; bottom: 48px; z-index: 1; }
+.F .pipe { position: absolute; right: 22px; bottom: 48px; z-index: 1; }
+.F .ground { position: absolute; left: 0; right: 0; bottom: 0; height: 48px; z-index: 1;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' shape-rendering='crispEdges'%3E%3Crect width='32' height='32' fill='%23c84c0c'/%3E%3Cg fill='%23000'%3E%3Crect y='14' width='32' height='2'/%3E%3Crect y='30' width='32' height='2'/%3E%3Crect x='14' width='2' height='14'/%3E%3Crect x='30' y='16' width='2' height='14'/%3E%3C/g%3E%3Cg fill='%23fcbcb0'%3E%3Crect width='14' height='2'/%3E%3Crect x='16' width='14' height='2'/%3E%3Crect y='16' width='30' height='2'/%3E%3C/g%3E%3C/svg%3E") 0 0 / 48px 48px; }
+.F .app { padding-bottom: 48px; }
+.F .dlg { background: var(--k); color: var(--w); box-shadow: inset 0 0 0 4px var(--k), inset 0 0 0 8px var(--w);
+  clip-path: polygon(0 6px, 6px 6px, 6px 0, calc(100% - 6px) 0, calc(100% - 6px) 6px, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 6px calc(100% - 6px), 0 calc(100% - 6px)); }
+.F .side { margin: 16px 0 16px 14px; padding: 24px 16px; font-family: "Press Start 2P", var(--mono); font-size: 11px; line-height: 1.6; gap: 12px; text-transform: uppercase; }
+.F .brand { font-size: 14px; color: var(--gold); gap: 10px; font-weight: 400; }
+.F .site { padding: 4px 0; color: #a4e4fc; font-size: 10px; text-transform: none; }
+.F .nav { padding: 3px 0 3px 18px; position: relative; }
+.F .nav.on { color: var(--gold); }
+.F .nav.on::before { content: "\25B6"; position: absolute; left: 0; animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0 } }
+.F .nav .n { font-family: "Press Start 2P", var(--mono); font-size: 10px; color: #a4e4fc; }
+.F .credits { font-family: "Press Start 2P", var(--mono); font-size: 10px; color: var(--gold); padding: 0; }
+.F .main { padding: 22px 36px 18px 30px; gap: 16px; }
+.F .hud { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-family: "Press Start 2P", var(--mono); font-size: 12px; color: var(--w); text-shadow: 3px 3px 0 var(--k); }
+.F .hud .hearts { display: flex; gap: 5px; align-items: center; }
+.F .hud .hearts > span:nth-child(3) { animation: blink 1.4s steps(1) infinite; }
+.F .u { background: var(--gold); color: var(--k); font-size: 25px; line-height: 1.1; padding: 12px 18px; box-shadow: inset 0 0 0 4px var(--k);
+  clip-path: polygon(0 6px, 6px 6px, 6px 0, calc(100% - 6px) 0, calc(100% - 6px) 6px, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 6px calc(100% - 6px), 0 calc(100% - 6px)); }
+.F .thread { gap: 16px; }
+.F .turn { grid-template-columns: 48px 1fr; }
+.F .mascot { width: 48px; height: 40px; }
+.F .mascot .f2 { animation: blink 1.8s steps(1) infinite; }
+.F .mascot .f1 { animation: blink 1.8s steps(1) infinite reverse; }
+.F .tool { font-family: "Press Start 2P", var(--mono); font-size: 10px; padding: 8px 10px; background: var(--k); color: var(--w); box-shadow: inset 0 0 0 3px var(--w); text-transform: uppercase; }
+.F .tool.ok::before { content: "\2605"; color: var(--gold); }
+.F .tool.run { animation: blink .5s steps(1) infinite; color: var(--gold); box-shadow: inset 0 0 0 3px var(--gold); }
+.F .next .tool { background: var(--gold); color: var(--k); box-shadow: inset 0 0 0 3px var(--k); }
+.F .next .tool::before { content: "\25B6"; }
+.F .reply { font-size: 24px; line-height: 1.12; padding: 22px 24px 18px; }
+.F .reply h3 { font-family: "Press Start 2P", var(--mono); font-size: 16px; color: var(--gold); margin: 0 0 12px; font-weight: 400; line-height: 1.4; text-transform: uppercase; }
+.F .reply p { margin: 0 0 8px; }
+.F .reply table { font-size: 22px; }
+.F .reply td { border-top: 3px dotted #3c3c3c; padding-top: 5px; padding-bottom: 4px; }
+.F .reply td:first-child { color: #a4e4fc; font-weight: 400; }
+.F .fix { font-size: 24px; line-height: 1.1; padding: 20px 24px; gap: 10px; }
+.F .fix .lbl { font-family: "Press Start 2P", var(--mono); font-size: 11px; color: #3cd83c; letter-spacing: 0; }
+.F .box { width: 16px; height: 16px; box-shadow: inset 0 0 0 3px var(--w); }
+.F .item.done .box { background: var(--gold); box-shadow: inset 0 0 0 3px var(--k), 0 0 0 3px var(--w); }
+.F .item.done .t2 { color: #9c9c9c; }
+.F .tag { font-family: "Press Start 2P", var(--mono); font-size: 9px; color: var(--k); background: var(--w); padding: 4px 6px; text-transform: uppercase; }
+.F .coin { position: absolute; left: 2px; top: -6px; animation: coinup 1s steps(8) .9s both; }
+@keyframes coinup { 0% { transform: translateY(0); opacity: 1 } 50% { transform: translateY(-30px) } 99% { opacity: 1 } 100% { transform: translateY(-8px); opacity: 0 } }
+.F .plus { position: absolute; left: 340px; top: 2px; font-family: "Press Start 2P", var(--mono); font-size: 10px; color: var(--gold); }
+.F .composer { font-size: 24px; padding: 14px 22px; }
+.F .composer span:first-child::after { content: "\25AE"; margin-left: 2px; animation: blink 1s steps(1) infinite; color: var(--gold); }
+.F .send { font-family: "Press Start 2P", var(--mono); font-size: 12px; width: auto; padding: 0 2px; color: var(--gold); }
+.F .loader { gap: 16px; font-family: "Press Start 2P", var(--mono); font-size: 12px; color: var(--w); text-shadow: 3px 3px 0 var(--k); min-height: 90px; padding-top: 30px; }
+.F .loader .qb { position: relative; width: 50px; height: 50px; animation: bump 1.2s steps(4) infinite; }
+.F .loader .qb .lc { position: absolute; left: 13px; top: 0; animation: pop 1.2s steps(6) infinite; }
+@keyframes bump { 0%, 30%, 100% { transform: translateY(0) } 10% { transform: translateY(-8px) } }
+@keyframes pop { 0% { transform: translateY(0); opacity: 0 } 10% { opacity: 1 } 45% { transform: translateY(-40px) } 70%, 100% { transform: translateY(-18px); opacity: 0 } }
+.F .loader .dots::after { content: "..."; animation: dots 1.2s steps(1) infinite; }
+@keyframes dots { 0% { content: "" } 25% { content: "." } 50% { content: ".." } 75% { content: "..." } }
+@media (prefers-reduced-motion: reduce) { .screen *, .screen *::before, .screen *::after { animation: none !important; } }
+</style>
+</head>
+<body data-state="done">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs></defs></svg>
+<div class="screen F">
+  <span class="cloudpx" style="top:200px;animation-delay:-2.2s" data-sprite="cloud" data-px="6" aria-hidden="true"></span>
+  <span class="cloudpx c2" style="top:420px" data-sprite="cloud" data-px="5" aria-hidden="true"></span>
+  <span class="cloudpx c3" style="top:52px" data-sprite="cloud" data-px="4" aria-hidden="true"></span>
+  <span class="hill" data-sprite="hill" data-px="6" aria-hidden="true"></span>
+  <span class="bush" data-sprite="bush" data-px="5" aria-hidden="true"></span>
+  <span class="pipe" data-sprite="pipe" data-px="6" aria-hidden="true"></span>
+  <div class="ground" aria-hidden="true"></div>
+  <div class="app">
+    <aside class="side dlg">
+      <div class="brand"><span data-sprite="mascot" data-px="2.5" aria-hidden="true"></span><span>ORBIT</span></div>
+      <div class="site "><span class="t">yourbrand.in</span><span class="t">&#9662;</span></div>
+      <div class="nav on "><span class="t">Chat</span></div>
+      <div class="nav"><span class="t">Action plan</span><span class="n">11</span></div>
+      <div class="nav"><span class="t">Documents</span><span class="n">4</span></div>
+      <div class="nav"><span class="t">Playbooks</span></div>
+      <div class="nav"><span class="t">Sites</span></div>
+      <div class="credits">&times;81 CR</div>
+    </aside>
+    <main class="main"><div class="hud"><span>WORLD 1-1</span><span class="hearts"><span data-sprite="heart" data-px="3"></span><span data-sprite="heart" data-px="3"></span><span data-sprite="heart" data-px="3"></span></span><span>&times;81</span></div>
+      <div class="thread">
+        <div class="pin"><div class="u ">Why did my traffic drop last month?</div></div>
+        <div class="turn">
+          <span class="mascot" data-sprite="mascot2" data-px="4" aria-hidden="true"></span>
+          <div class="body">
+            <div class="tools"><span class="tool ok "><i class="ti"></i>Search Console</span><span class="tool ok "><i class="ti"></i>SERP analysis</span><span class="tool run "><i class="ti"></i>Competitor pages</span></div>
+            <div class="loader"><span class="qb" aria-hidden="true"><span data-sprite="qblock" data-px="5"></span><span class="lc" data-sprite="coin" data-px="4"></span></span><span>RESEARCHING<span class="dots"></span></span></div>
+            <div class="pin"><div class="reply dlg">
+              <h3>Clicks fell 23%</h3>
+              <p>It isn't a penalty. Two of your pages compete for the same search, and the server is slow to answer.</p>
+              <table><tbody>
+                <tr><td>Pages competing</td><td>/blog/ai-receptionist and /compare target the same query</td></tr>
+                <tr><td>Speed</td><td>Server waits 1.8 s before sending the page</td></tr>
+                <tr><td>Lost rankings</td><td>&ldquo;ai receptionist&rdquo; slipped from #4 to #11 on mobile</td></tr>
+              </tbody></table>
+            </div></div>
+            <div class="pin"><div class="fix dlg">
+              <span class="lbl">Fix this week</span>
+              <div class="item done"><span class="box "></span><span class="t2">Merge the two competing pages</span><span class="tag t-high">High</span><span class="coin" data-sprite="coin" data-px="3" aria-hidden="true"></span><span class="plus" aria-hidden="true">+1</span></div>
+              <div class="item"><span class="box"></span><span class="t2">Add FAQ schema to pricing</span><span class="tag t-aeo">AEO</span></div>
+              <div class="item"><span class="box"></span><span class="t2">Compress hero images</span><span class="tag t-speed">Speed</span></div>
+            </div></div>
+            <div class="tools next"><span class="tool sug ">Show both pages</span><span class="tool sug ">Draft the redirect</span><span class="tool sug ">Check speed again</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="pin"><div class="composer dlg"><span>Ask in English or Hinglish&hellip;</span><span class="send">&#9654;</span></div></div>
+    </main>
+  </div>
+
+</div>
+<script>
+(() => {
+  // State: "done" by default; open with #thinking to see the loader state.
+  // Add "still" to the hash (#still, #thinking-still) to jump one-shot entrances to their end, for screenshots.
+  const state = location.hash.includes("thinking") ? "thinking" : "done";
+  document.body.dataset.state = state;
+  if (state === "done") document.querySelectorAll(".tool.run").forEach(t => t.classList.replace("run", "ok"));
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (location.hash.includes("still")) requestAnimationFrame(() => document.getAnimations().forEach(a => {
+    if (a.effect && a.effect.getComputedTiming().iterations !== Infinity) a.finish();
+  }));
+  function rand(seed) { return () => ((seed = (seed * 16807) % 2147483647) / 2147483647); }
+  // Pixel sprites from string bitmaps (one <rect> per pixel, crisp edges).
+  const PAL = { k: "#000", o: "#f8b800", y: "#fce0a8", w: "#fcfcfc", q: "#f8b800", b: "#ac7c00", r: "#d82800", c: "#fcfcfc",
+                g: "#00a800", G: "#80d010", d: "#005800", p: "#00a800", P: "#b8f818" };
+  const SPR = {
+    mascot: [".kkkkkkkkkk.", "kyyooooooook", "kyookoookook", "kyookoookook", "kooooooooook", "koookkkkoook", "kooooooooook", ".kkkookkkkk.", "...kok......", "...kk......."],
+    blink:  [".kkkkkkkkkk.", "kyyooooooook", "kyoooooooook", "kyokkoookkok", "kooooooooook", "koookkkkoook", "kooooooooook", ".kkkookkkkk.", "...kok......", "...kk......."],
+    qblock: ["kkkkkkkkkk", "kqqqqqqqqk", "kqbqwwqbqk", "kqqwqqwqqk", "kqqqqwqqqk", "kqqqwqqqqk", "kqqqqqqqqk", "kqbqwqqbqk", "kqqqqqqqqk", "kkkkkkkkkk"],
+    coin:   [".kkkk.", "kqqwqk", "kqwqqk", "kqwqqk", "kqwqqk", "kqwqqk", "kqqqqk", ".kkkk."],
+    heart:  [".rr.rr.", "rrrrrrr", "rrrrrrr", ".rrrrr.", "..rrr..", "...r..."],
+    cloud:  ["....cccc........", "..cccccccc.ccc..", ".cccccccccccccc.", "cccccccccccccccc", ".cccccccccccccc."],
+    hill:   ["........kkkkk........", "......kkgggggkk......", ".....kggggggggk......", "....kgggkgggkggk.....", "...kggggggggggggk....", "..kggggkggggggggk....", ".kgggggggggggkgggk...", "kgggggggggggggggggk..", "ggggggggggggggggggggk"],
+    bush:   ["....kkk.....kkk.....", "..kkGGGkk.kkGGGkk...", ".kGGGGGGGkGGGGGGGk..", "kGGGGGGGGGGGGGGGGGk.", "GGGGGGGGGGGGGGGGGGGk"],
+    pipe:   ["kkkkkkkkkkkk", "kPgggggggddk", "kPgggggggddk", "kkkkkkkkkkkk", ".kPggggggdk.", ".kPggggggdk.", ".kPggggggdk.", ".kPggggggdk.", ".kPggggggdk."],
+  };
+  function rects(rows) {
+    let out = "";
+    rows.forEach((row, y) => [...row].forEach((ch, x) => { if (PAL[ch]) out += `<rect x="${x}" y="${y}" width="1.02" height="1.02" fill="${PAL[ch]}"/>`; }));
+    return out;
+  }
+  function svgFor(rows, px, inner) {
+    const w = Math.max(...rows.map(r => r.length)), h = rows.length;
+    return `<svg class="px" viewBox="0 0 ${w} ${h}" width="${w * px}" height="${h * px}" shape-rendering="crispEdges" aria-hidden="true">${inner}</svg>`;
+  }
+  document.querySelectorAll("[data-sprite]").forEach(el => {
+    const name = el.dataset.sprite, px = parseFloat(el.dataset.px || "3");
+    el.innerHTML = name === "mascot2"
+      ? svgFor(SPR.mascot, px, `<g class="f1">${rects(SPR.mascot)}</g><g class="f2">${rects(SPR.blink)}</g>`)
+      : svgFor(SPR[name], px, rects(SPR[name]));
+  });
+})();
+</script>
+</body>
+</html>

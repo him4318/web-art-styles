@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orbit · Ink & seal</title>
+<!-- Web art style mockup: Ink & seal (17_ink). Self-contained: only Google Fonts are external.
+     Reference size 1280x800. Append #thinking to the URL for the loader state.
+     Add -still / #still to the hash to skip one-shot entrance animations (used for the PNG captures). -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;800&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap">
+<style>
+/* ---------- shared app skeleton (identical in every mockup; 1280x800 reference) ---------- */
+*, *::before, *::after { box-sizing: border-box }
+html, body { margin: 0; height: 100%; }
+body { overflow: hidden; font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+:root {
+  --sans: "Geist", ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+  --mono: "Geist Mono", ui-monospace, Consolas, monospace;
+  --serif: "Instrument Serif", Georgia, "Times New Roman", serif;
+}
+.screen { position: relative; overflow: hidden; width: 100vw; height: 100vh; min-height: 640px; isolation: isolate; }
+.app { position: relative; z-index: 2; display: grid; grid-template-columns: 220px 1fr; height: 100%; }
+.side { display: flex; flex-direction: column; gap: 6px; padding: 22px 16px; font-size: 15px; min-width: 0; position: relative; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 20px; margin-bottom: 14px; }
+.brand svg { width: 30px; height: 30px; flex: none }
+.site { font-size: 14px; padding: 9px 12px; margin-bottom: 10px; display: flex; justify-content: space-between; }
+.nav { padding: 9px 12px; display: flex; justify-content: space-between; align-items: center; }
+.nav .n { font: 500 12.5px var(--mono); }
+.credits { margin-top: auto; font: 500 12.5px var(--mono); padding: 10px 12px; }
+.main { display: flex; flex-direction: column; min-width: 0; padding: 38px 44px 26px; gap: 18px; overflow: hidden; position: relative; }
+.main > * { width: 100%; max-width: var(--col, 880px); }
+.thread { flex: 1; display: flex; flex-direction: column; gap: 26px; min-height: 0; }
+.pin { display: block; }
+.u { margin-left: auto; width: fit-content; max-width: 70%; font-size: 17px; padding: 13px 20px; }
+.turn { display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: start; min-width: 0; }
+.mascot { width: 44px; height: 44px; display: block; }
+.body { display: grid; gap: 16px; min-width: 0; }
+.tools { display: flex; flex-wrap: wrap; gap: 8px; }
+.tool { font: 500 13px var(--mono); padding: 6px 12px; display: inline-flex; gap: 7px; align-items: center; }
+.reply { font-size: 17.5px; line-height: 1.55; padding: 22px 26px; }
+.reply h3 { margin: 0 0 6px; }
+.reply p { margin: 0 0 10px }
+.reply table { width: 100%; border-collapse: collapse; font-size: 16px; }
+.reply td { padding: 9px 12px 9px 0; vertical-align: top; }
+.reply td:first-child { white-space: nowrap; font-weight: 600; padding-right: 22px; width: 1%; }
+.fix { padding: 20px 26px; display: grid; gap: 14px; font-size: 17px; position: relative; }
+.fix .lbl { font: 500 12px var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+.item { display: grid; grid-template-columns: 20px 1fr auto; gap: 12px; align-items: center; position: relative; }
+.box { width: 18px; height: 18px; display: block; }
+.ti { display: none; }
+.tag { font: 500 12px var(--mono); padding: 2px 9px; }
+.composer { font-size: 16px; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+.send { width: 34px; height: 34px; display: grid; place-items: center; flex: none; }
+.loader { display: none; align-items: center; gap: 14px; font-size: 15.5px; min-height: 40px; }
+[data-state="thinking"] .loader { display: flex; }
+[data-state="thinking"] .reply, [data-state="thinking"] .fix, [data-state="thinking"] .next { display: none; }
+.next .tool { cursor: pointer; }
+/* ================= Ink & seal ================= */
+.B { --paper: #efe7d4; --ink: #1d1814; --wash: #6f6658; --washc: #8b8172; --seal: #b3261e; --col: 740px;
+  background: var(--paper); color: var(--ink); }
+.B::before { content: ""; position: absolute; inset: 0; z-index: 0;
+  background-image:
+    radial-gradient(120% 90% at 50% 40%, transparent 55%, rgba(80,60,30,.18)),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.008 .18' numOctaves='3' seed='2'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .37 0 0 0 0 .25 0 0 0 -1.2 .9'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23f)' opacity='.5'/%3E%3C/svg%3E"); }
+/* distant wash mountains on the empty right side (Ma Yuan: weight bottom-left, air top-right) */
+.B .mtn { position: absolute; right: -110px; top: 40px; width: 470px; height: 300px; z-index: 1; opacity: .2; filter: url(#bleed); }
+.B .mtn path { fill: var(--washc) }
+.B .boat { position: absolute; right: 70px; top: 360px; width: 70px; z-index: 1; opacity: .5; }
+.B .side .rule { position: absolute; left: 218px; top: 26px; bottom: 26px; width: 4px; height: auto; filter: url(#dry); }
+.B .brand span { font-family: var(--serif); font-size: 28px; font-weight: 400; letter-spacing: .01em; }
+.B .nav { padding-left: 22px; position: relative; }
+.B .nav.on::before { content: ""; position: absolute; left: 4px; top: 50%; width: 10px; height: 10px; border-radius: 50%; background: var(--ink); transform: translateY(-50%); filter: url(#bleed); }
+.B .nav.on { font-weight: 600 }
+.B .nav .n { color: var(--seal); }
+.B .site { border-bottom: 1px solid rgba(29,24,20,.25); }
+.B .credits { color: var(--wash); }
+.B .main { padding-left: 56px; }
+.B .u { position: relative; font-style: italic; font-family: var(--serif); font-size: 23px; padding: 4px 10px; }
+.B .u::before { content: ""; position: absolute; inset: -4px -16px; z-index: -1; background: rgba(139,129,114,.28); border-radius: 40% 55% 45% 50%; filter: url(#bleed); }
+.B .tool { color: var(--wash); padding-left: 0; }
+.B .tool.ok::before { content: "\2014"; color: var(--ink) }
+.B .tool.run::before { content: "\00B7"; color: var(--seal); font-size: 22px; line-height: 0; animation: pulse 1s infinite }
+.B .next .tool { color: var(--ink); border-bottom: 1px solid rgba(29,24,20,.35); padding: 2px 0; margin-right: 14px; font-family: var(--serif); font-style: italic; font-size: 17px; }
+@keyframes pulse { 50% { opacity: .2 } }
+.B .reply { position: relative; padding: 22px 26px; }
+.B .reply::before { content: ""; position: absolute; inset: 0; z-index: -1; background: rgba(139,129,114,.16); border-radius: 26px 36px 30px 42px; filter: url(#bleed); }
+.B .reply h3 { font-family: var(--serif); font-weight: 400; font-size: 34px; margin: 0 0 6px; line-height: 1.05; }
+.B .reply td { border-top: 1px solid rgba(29,24,20,.14); }
+.B .fix { padding: 8px 0 0 0; }
+.B .fix .lbl { color: var(--seal); }
+.B .box { border: 2px solid var(--ink); border-radius: 50%; filter: url(#bleed); }
+.B .item.done .box { background: var(--ink); }
+.B .item.done .t2 { color: var(--wash) }
+.B .tag { color: var(--wash); border: 1px solid rgba(29,24,20,.2); }
+.B .seal { position: absolute; right: -96px; top: -18px; width: 72px; height: 72px; background: var(--seal); color: var(--paper);
+  display: grid; place-items: center; font: 400 18px/1 var(--serif); letter-spacing: .06em; text-align: center;
+  box-shadow: inset 0 0 0 4px var(--seal), inset 0 0 0 6px var(--paper); filter: url(#stamp);
+  transform: rotate(-8deg); animation: stamp .45s cubic-bezier(.2,1.5,.4,1) both; animation-delay: .9s; }
+@keyframes stamp { from { transform: rotate(-8deg) scale(1.9); opacity: 0 } 60% { opacity: 1 } }
+.B .composer { position: relative; }
+.B .composer::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: var(--ink); filter: url(#dry); }
+.B .composer { padding-inline: 2px; color: var(--wash); font-family: var(--serif); font-style: italic; font-size: 19px; }
+.B .send { color: var(--ink); font-family: var(--sans); font-style: normal; font-size: 20px; }
+.B .loader svg { width: 170px; height: 36px; overflow: visible }
+.B .loader path { fill: none; stroke: var(--ink); stroke-width: 10; stroke-linecap: round; stroke-dasharray: 160; stroke-dashoffset: 160; filter: url(#dry); animation: write 2.2s cubic-bezier(.6,.1,.3,1) infinite; }
+@keyframes write { 70%, 100% { stroke-dashoffset: 0 } }
+.B .loader span { font-family: var(--serif); font-style: italic; font-size: 21px; color: var(--wash) }
+.B .mascot circle.enso { fill: none; stroke: var(--ink); stroke-width: 3.2; stroke-dasharray: 80; stroke-dashoffset: 80; filter: url(#dry); animation: write 3s ease-out .2s forwards; }
+@media (prefers-reduced-motion: reduce) {
+  .screen *, .screen *::before, .screen *::after { animation: none !important; }
+  .B .loader path, .B .mascot circle.enso { stroke-dashoffset: 0; }
+}
+</style>
+</head>
+<body data-state="done">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><filter id="bleed" x="-20%" y="-20%" width="140%" height="140%">
+  <feTurbulence type="fractalNoise" baseFrequency=".04" numOctaves="3" seed="5" result="n"/>
+  <feDisplacementMap in="SourceGraphic" in2="n" scale="9"/>
+  <feGaussianBlur stdDeviation="1.2"/>
+</filter>
+<filter id="dry" x="-10%" y="-40%" width="120%" height="180%">
+  <feTurbulence type="fractalNoise" baseFrequency=".9 .06" numOctaves="2" seed="11" result="n"/>
+  <feDisplacementMap in="SourceGraphic" in2="n" scale="3" result="d"/>
+  <feTurbulence type="fractalNoise" baseFrequency=".5 .03" seed="3" result="m"/>
+  <feColorMatrix in="m" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -3 2.1" result="mask"/>
+  <feComposite in="d" in2="mask" operator="in"/>
+</filter>
+<filter id="stamp" x="0" y="0" width="100%" height="100%">
+  <feTurbulence type="fractalNoise" baseFrequency=".7" seed="8" result="n"/>
+  <feColorMatrix in="n" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -2.4 2.2" result="m"/>
+  <feComposite in="SourceGraphic" in2="m" operator="in"/>
+</filter></defs></svg>
+<div class="screen B">
+  <svg class="mtn" viewBox="0 0 300 190" aria-hidden="true"><path d="M0 190C30 150 52 120 80 118 104 116 112 70 140 50 168 30 180 64 196 80 214 98 236 60 262 72 284 82 296 120 300 190Z"/><path d="M60 190C90 160 120 150 150 152 190 154 210 124 240 128 270 132 290 160 300 190Z" opacity=".6"/></svg>
+  <svg class="boat" viewBox="0 0 70 20" aria-hidden="true"><path d="M4 12q30 8 62-2" stroke="#1d1814" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M40 11V2" stroke="#1d1814" stroke-width="1.4"/><path d="M10 17q26 3 50-1" stroke="#8b8172" stroke-width="1" fill="none" opacity=".6"/></svg>
+  <div class="app">
+    <aside class="side "><svg class="rule" viewBox="0 0 3 600" preserveAspectRatio="none" aria-hidden="true"><rect width="3" height="600" fill="#1d1814"/></svg>
+      <div class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="15" r="11" fill="none" stroke="#1d1814" stroke-width="3" stroke-dasharray="62 8"/><circle cx="16" cy="15" r="3" fill="#b3261e"/></svg><span>orbit</span></div>
+      <div class="site "><span class="t">yourbrand.in</span><span class="t">&#9662;</span></div>
+      <div class="nav on "><span class="t">Chat</span></div>
+      <div class="nav"><span class="t">Action plan</span><span class="n">11</span></div>
+      <div class="nav"><span class="t">Documents</span><span class="n">4</span></div>
+      <div class="nav"><span class="t">Playbooks</span></div>
+      <div class="nav"><span class="t">Sites</span></div>
+      <div class="credits">81 credits</div>
+    </aside>
+    <main class="main">
+      <div class="thread">
+        <div class="pin"><div class="u ">Why did my traffic drop last month?</div></div>
+        <div class="turn">
+          <svg class="mascot" viewBox="0 0 32 32" aria-hidden="true"><circle class="enso" cx="16" cy="16" r="12.5"/><circle cx="12.5" cy="15" r="1.6" fill="#1d1814"/><circle cx="19.5" cy="15" r="1.6" fill="#1d1814"/><path d="M13 20.5q3 2 6 0" stroke="#1d1814" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>
+          <div class="body">
+            <div class="tools"><span class="tool ok "><i class="ti"></i>Search Console</span><span class="tool ok "><i class="ti"></i>SERP analysis</span><span class="tool run "><i class="ti"></i>Competitor pages</span></div>
+            <div class="loader"><svg viewBox="0 0 120 26" aria-hidden="true"><path d="M4 16C20 6 36 22 54 13S88 4 116 14"/></svg><span>Reading your rivals&hellip;</span></div>
+            <div class="pin"><div class="reply ">
+              <h3>Clicks fell 23%</h3>
+              <p>It isn't a penalty. Two of your pages compete for the same search, and the server is slow to answer.</p>
+              <table><tbody>
+                <tr><td>Pages competing</td><td>/blog/ai-receptionist and /compare target the same query</td></tr>
+                <tr><td>Speed</td><td>Server waits 1.8 s before sending the page</td></tr>
+                <tr><td>Lost rankings</td><td>&ldquo;ai receptionist&rdquo; slipped from #4 to #11 on mobile</td></tr>
+              </tbody></table>
+            </div></div>
+            <div class="pin"><div class="fix ">
+              <span class="lbl">Fix this week</span>
+              <div class="item done"><span class="box "></span><span class="t2">Merge the two competing pages</span><span class="tag t-high">High</span><span class="seal" aria-label="Done">DONE</span></div>
+              <div class="item"><span class="box"></span><span class="t2">Add FAQ schema to pricing</span><span class="tag t-aeo">AEO</span></div>
+              <div class="item"><span class="box"></span><span class="t2">Compress hero images</span><span class="tag t-speed">Speed</span></div>
+            </div></div>
+            <div class="tools next"><span class="tool sug ">Show both pages</span><span class="tool sug ">Draft the redirect</span><span class="tool sug ">Check speed again</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="pin"><div class="composer "><span>Ask in English or Hinglish&hellip;</span><span class="send">&#8593;</span></div></div>
+    </main>
+  </div>
+
+</div>
+<script>
+(() => {
+  // State: "done" by default; open with #thinking to see the loader state.
+  // Add "still" to the hash (#still, #thinking-still) to jump one-shot entrances to their end, for screenshots.
+  const state = location.hash.includes("thinking") ? "thinking" : "done";
+  document.body.dataset.state = state;
+  if (state === "done") document.querySelectorAll(".tool.run").forEach(t => t.classList.replace("run", "ok"));
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (location.hash.includes("still")) requestAnimationFrame(() => document.getAnimations().forEach(a => {
+    if (a.effect && a.effect.getComputedTiming().iterations !== Infinity) a.finish();
+  }));
+  function rand(seed) { return () => ((seed = (seed * 16807) % 2147483647) / 2147483647); }
+
+})();
+</script>
+</body>
+</html>

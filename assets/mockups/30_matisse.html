@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orbit · Cut paper + grain</title>
+<!-- Web art style mockup: Cut paper + grain (30_matisse). Self-contained: only Google Fonts are external.
+     Reference size 1280x800. Append #thinking to the URL for the loader state.
+     Add -still / #still to the hash to skip one-shot entrance animations (used for the PNG captures). -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;800&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap">
+<style>
+/* ---------- shared app skeleton (identical in every mockup; 1280x800 reference) ---------- */
+*, *::before, *::after { box-sizing: border-box }
+html, body { margin: 0; height: 100%; }
+body { overflow: hidden; font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+:root {
+  --sans: "Geist", ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+  --mono: "Geist Mono", ui-monospace, Consolas, monospace;
+  --serif: "Instrument Serif", Georgia, "Times New Roman", serif;
+}
+.screen { position: relative; overflow: hidden; width: 100vw; height: 100vh; min-height: 640px; isolation: isolate; }
+.app { position: relative; z-index: 2; display: grid; grid-template-columns: 220px 1fr; height: 100%; }
+.side { display: flex; flex-direction: column; gap: 6px; padding: 22px 16px; font-size: 15px; min-width: 0; position: relative; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 20px; margin-bottom: 14px; }
+.brand svg { width: 30px; height: 30px; flex: none }
+.site { font-size: 14px; padding: 9px 12px; margin-bottom: 10px; display: flex; justify-content: space-between; }
+.nav { padding: 9px 12px; display: flex; justify-content: space-between; align-items: center; }
+.nav .n { font: 500 12.5px var(--mono); }
+.credits { margin-top: auto; font: 500 12.5px var(--mono); padding: 10px 12px; }
+.main { display: flex; flex-direction: column; min-width: 0; padding: 38px 44px 26px; gap: 18px; overflow: hidden; position: relative; }
+.main > * { width: 100%; max-width: var(--col, 880px); }
+.thread { flex: 1; display: flex; flex-direction: column; gap: 26px; min-height: 0; }
+.pin { display: block; }
+.u { margin-left: auto; width: fit-content; max-width: 70%; font-size: 17px; padding: 13px 20px; }
+.turn { display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: start; min-width: 0; }
+.mascot { width: 44px; height: 44px; display: block; }
+.body { display: grid; gap: 16px; min-width: 0; }
+.tools { display: flex; flex-wrap: wrap; gap: 8px; }
+.tool { font: 500 13px var(--mono); padding: 6px 12px; display: inline-flex; gap: 7px; align-items: center; }
+.reply { font-size: 17.5px; line-height: 1.55; padding: 22px 26px; }
+.reply h3 { margin: 0 0 6px; }
+.reply p { margin: 0 0 10px }
+.reply table { width: 100%; border-collapse: collapse; font-size: 16px; }
+.reply td { padding: 9px 12px 9px 0; vertical-align: top; }
+.reply td:first-child { white-space: nowrap; font-weight: 600; padding-right: 22px; width: 1%; }
+.fix { padding: 20px 26px; display: grid; gap: 14px; font-size: 17px; position: relative; }
+.fix .lbl { font: 500 12px var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+.item { display: grid; grid-template-columns: 20px 1fr auto; gap: 12px; align-items: center; position: relative; }
+.box { width: 18px; height: 18px; display: block; }
+.ti { display: none; }
+.tag { font: 500 12px var(--mono); padding: 2px 9px; }
+.composer { font-size: 16px; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+.send { width: 34px; height: 34px; display: grid; place-items: center; flex: none; }
+.loader { display: none; align-items: center; gap: 14px; font-size: 15.5px; min-height: 40px; }
+[data-state="thinking"] .loader { display: flex; }
+[data-state="thinking"] .reply, [data-state="thinking"] .fix, [data-state="thinking"] .next { display: none; }
+.next .tool { cursor: pointer; }
+/* ================= Cut paper + grain ================= */
+.A { --inkA: #231b1b; --amb: #de9c31; --plum: #8a3a6e; --teal: #2f6f6a; --cream: #f7f2e7;
+  background: #d9d2c3; color: var(--inkA); font-family: var(--sans); }
+/* linen grain over the whole table */
+.A::before { content: ""; position: absolute; inset: 0; z-index: 0; opacity: .5;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 .2 0 0 0 0 .15 0 0 0 0 .1 0 0 0 -1.6 1.05'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E"); }
+/* big background paper cut-outs (Matisse leaves) */
+.A .leaf { position: absolute; z-index: 1; filter: drop-shadow(6px 8px 4px rgba(40,25,10,.28)); transform-origin: 50% 100%; animation: sway 6s ease-in-out infinite; }
+.A .leaf.l1 { right: -36px; top: 70px; width: 230px; color: var(--teal); }
+.A .leaf.l2 { right: 150px; bottom: -70px; width: 190px; color: var(--plum); animation-delay: -2s; }
+.A .leaf.l3 { right: 70px; top: 470px; width: 74px; color: var(--amb); animation-duration: 4.4s; }
+@keyframes sway { 50% { transform: rotate(5deg) scaleX(.95) } }
+.A .pin { filter: drop-shadow(6px 8px 4px rgba(40,25,10,.26)); }
+.A .cut { background: var(--cream); position: relative; }
+.A .cut.grain::after { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .55;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4' seed='9'/%3E%3CfeColorMatrix values='0 0 0 0 .55 0 0 0 0 .35 0 0 0 0 .2 0 0 0 -9 6.4'/%3E%3C/filter%3E%3Crect width='90' height='90' filter='url(%23g)'/%3E%3C/svg%3E");
+  -webkit-mask-image: linear-gradient(to bottom right, transparent 25%, #000 100%); mask-image: linear-gradient(to bottom right, transparent 25%, #000 100%); }
+.A .side { background: transparent; color: #f7f2e7; }
+.A .side-paper { position: absolute; inset: 14px 4px 14px 12px; background: var(--plum); z-index: -1; filter: drop-shadow(6px 8px 4px rgba(40,25,10,.3)); }
+.A .side > :not(.side-paper) { margin-left: 8px; }
+.A .brand { margin-top: 10px; font-size: 22px; letter-spacing: -.01em; }
+.A .side .site { background: rgba(247,242,231,.14); color: #f7f2e7; }
+.A .nav.on { background: var(--amb); color: var(--inkA); font-weight: 600; }
+.A .nav .n { background: rgba(0,0,0,.18); padding: 0 6px; }
+.A .credits { color: #f7f2e7; margin-bottom: 14px; }
+.A .u { background: var(--amb); font-weight: 500; transform: rotate(-.8deg); }
+.A .tool { background: var(--cream); }
+.A .tool.ok::before { content: ""; width: 8px; height: 8px; background: var(--teal); }
+.A .tool.run::before { content: ""; width: 8px; height: 8px; background: var(--amb); animation: flipx .7s ease-in-out infinite; }
+.A .reply { transform: rotate(.4deg); }
+.A .reply h3 { font-size: 22px; font-weight: 800; letter-spacing: -.01em; }
+.A .reply td { border-top: 2px dashed rgba(35,27,27,.18); }
+.A .fix { background: var(--teal); color: #f7f2e7; transform: rotate(-.6deg); }
+.A .fix .lbl { color: #f6d9a2; }
+.A .fix .tag { background: rgba(247,242,231,.18) }
+.A .box { background: #f7f2e7; }
+.A .item.done .box { background: var(--amb); }
+.A .item.done .t2 { text-decoration: line-through; text-decoration-thickness: 2px; opacity: .8 }
+.A .item.done .box::after { content: ""; display: block; width: 100%; height: 100%; background: var(--inkA);
+  clip-path: polygon(18% 50%, 36% 70%, 82% 22%, 92% 34%, 37% 88%, 8% 60%); }
+.A .stick { animation: flipin .55s cubic-bezier(.3,1.6,.5,1) both; animation-delay: .8s; }
+@keyframes flipin { from { transform: rotateY(90deg) } }
+.A .composer { background: var(--cream); color: #6b5f58; }
+.A .send { background: var(--inkA); color: var(--cream); }
+.A .loader .bits { display: flex; gap: 6px }
+.A .loader .bits i { width: 16px; height: 22px; background: var(--plum); animation: flipx .9s ease-in-out infinite; }
+.A .loader .bits i:nth-child(2) { background: var(--amb); animation-delay: .15s }
+.A .loader .bits i:nth-child(3) { background: var(--teal); animation-delay: .3s }
+@keyframes flipx { 50% { transform: scaleX(.1) } }
+.A .mascot .bob { transform-origin: 15px 28px; animation: wiggle 2.4s ease-in-out infinite; }
+@keyframes wiggle { 25% { transform: rotate(-6deg) } 75% { transform: rotate(5deg) } }
+@media (prefers-reduced-motion: reduce) { .screen *, .screen *::before, .screen *::after { animation: none !important; } }
+</style>
+</head>
+<body data-state="done">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs></defs></svg>
+<div class="screen A">
+  <svg class="leaf l1" viewBox="0 0 100 160" aria-hidden="true"><path fill="currentColor" d="M50 158C47 120 44 90 20 70 4 56 8 30 28 32 40 33 44 50 46 60 44 36 42 10 56 4 70-2 76 20 64 40 60 50 56 60 58 66 64 52 76 40 88 46 100 54 92 74 76 80 62 86 56 110 54 158Z"/></svg>
+  <svg class="leaf l2" viewBox="0 0 100 160" aria-hidden="true"><path fill="currentColor" d="M50 158C44 120 30 104 14 96 0 88 6 66 24 70 36 72 42 86 46 96 40 70 30 46 44 30 56 16 74 28 66 50 60 66 56 84 56 98 62 80 72 66 86 70 98 74 94 92 80 98 66 104 58 124 54 158Z"/></svg>
+  <svg class="leaf l3" viewBox="0 0 40 40" aria-hidden="true"><path fill="currentColor" d="M20 1 25 14 39 14 28 23 32 38 20 29 8 38 12 23 1 14 15 14Z"/></svg>
+  <div class="app">
+    <aside class="side "><div class="side-paper cut" data-j="4"></div>
+      <div class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="7.5" fill="#de9c31"/><ellipse cx="16" cy="16" rx="14" ry="5.2" fill="none" stroke="#f7f2e7" stroke-width="2.4" transform="rotate(-24 16 16)"/></svg><span>orbit</span></div>
+      <div class="site cut"><span class="t">yourbrand.in</span><span class="t">&#9662;</span></div>
+      <div class="nav on cut"><span class="t">Chat</span></div>
+      <div class="nav"><span class="t">Action plan</span><span class="n">11</span></div>
+      <div class="nav"><span class="t">Documents</span><span class="n">4</span></div>
+      <div class="nav"><span class="t">Playbooks</span></div>
+      <div class="nav"><span class="t">Sites</span></div>
+      <div class="credits">81 credits</div>
+    </aside>
+    <main class="main">
+      <div class="thread">
+        <div class="pin"><div class="u cut">Why did my traffic drop last month?</div></div>
+        <div class="turn">
+          <svg class="mascot" viewBox="0 0 32 32" aria-hidden="true"><g class="bob"><path fill="#8a3a6e" d="M16 3C8.8 3 3 8.2 3 14.6c0 3.5 1.7 6.6 4.5 8.7L6 29l6.4-3.4c1.1.3 2.4.4 3.6.4 7.2 0 13-5.2 13-11.4S23.2 3 16 3Z"/><rect x="10" y="11" width="3.4" height="4.6" fill="#f7f2e7"/><rect x="18.6" y="11" width="3.4" height="4.6" fill="#f7f2e7"/><path d="M12 19.5h8l-4 3Z" fill="#de9c31"/></g></svg>
+          <div class="body">
+            <div class="tools"><span class="tool ok cut"><i class="ti"></i>Search Console</span><span class="tool ok cut"><i class="ti"></i>SERP analysis</span><span class="tool run cut"><i class="ti"></i>Competitor pages</span></div>
+            <div class="loader"><span class="bits"><i></i><i></i><i></i></span><span>Cutting the findings into shape&hellip;</span></div>
+            <div class="pin"><div class="reply cut grain">
+              <h3>Clicks fell 23%</h3>
+              <p>It isn't a penalty. Two of your pages compete for the same search, and the server is slow to answer.</p>
+              <table><tbody>
+                <tr><td>Pages competing</td><td>/blog/ai-receptionist and /compare target the same query</td></tr>
+                <tr><td>Speed</td><td>Server waits 1.8 s before sending the page</td></tr>
+                <tr><td>Lost rankings</td><td>&ldquo;ai receptionist&rdquo; slipped from #4 to #11 on mobile</td></tr>
+              </tbody></table>
+            </div></div>
+            <div class="pin"><div class="fix cut grain">
+              <span class="lbl">Fix this week</span>
+              <div class="item done"><span class="box stick"></span><span class="t2">Merge the two competing pages</span><span class="tag t-high">High</span></div>
+              <div class="item"><span class="box"></span><span class="t2">Add FAQ schema to pricing</span><span class="tag t-aeo">AEO</span></div>
+              <div class="item"><span class="box"></span><span class="t2">Compress hero images</span><span class="tag t-speed">Speed</span></div>
+            </div></div>
+            <div class="tools next"><span class="tool sug cut">Show both pages</span><span class="tool sug cut">Draft the redirect</span><span class="tool sug cut">Check speed again</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="pin"><div class="composer cut"><span>Ask in English or Hinglish&hellip;</span><span class="send">&#8593;</span></div></div>
+    </main>
+  </div>
+
+</div>
+<script>
+(() => {
+  // State: "done" by default; open with #thinking to see the loader state.
+  // Add "still" to the hash (#still, #thinking-still) to jump one-shot entrances to their end, for screenshots.
+  const state = location.hash.includes("thinking") ? "thinking" : "done";
+  document.body.dataset.state = state;
+  if (state === "done") document.querySelectorAll(".tool.run").forEach(t => t.classList.replace("run", "ok"));
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (location.hash.includes("still")) requestAnimationFrame(() => document.getAnimations().forEach(a => {
+    if (a.effect && a.effect.getComputedTiming().iterations !== Infinity) a.finish();
+  }));
+  function rand(seed) { return () => ((seed = (seed * 16807) % 2147483647) / 2147483647); }
+  // Jagged "cut with scissors" edges: a seeded polygon around each .cut element.
+  const J = { "side-paper": 4, u: 2.4, tool: 1.2, reply: 2.6, fix: 2.6, composer: 1.8, site: 1.6, nav: 1.6 };
+  function cut(el, i) {
+    const key = Object.keys(J).find(k => el.classList.contains(k));
+    const j = parseFloat(el.dataset.j || J[key] || 2), r = rand(97 + i * 131), pts = [];
+    const side = (n, f) => { for (let k = 0; k < n; k++) pts.push(f(k / n)); };
+    const off = () => ((r() - 0.5) * 2 * j).toFixed(1) + "px";
+    side(11, t => `calc(${(t * 100).toFixed(1)}% + ${off()}) calc(0% + ${(r() * j).toFixed(1)}px)`);
+    side(6, t => `calc(100% - ${(r() * j).toFixed(1)}px) calc(${(t * 100).toFixed(1)}% + ${off()})`);
+    side(11, t => `calc(${(100 - t * 100).toFixed(1)}% + ${off()}) calc(100% - ${(r() * j).toFixed(1)}px)`);
+    side(6, t => `calc(0% + ${(r() * j).toFixed(1)}px) calc(${(100 - t * 100).toFixed(1)}% + ${off()})`);
+    el.style.clipPath = `polygon(${pts.join(",")})`;
+  }
+  document.querySelectorAll(".A .cut").forEach(cut);
+})();
+</script>
+</body>
+</html>

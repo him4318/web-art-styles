@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orbit · Vaporwave</title>
+<!-- Web art style mockup: Vaporwave (26_vaporwave). Self-contained: only Google Fonts are external.
+     Reference size 1280x800. Append #thinking to the URL for the loader state.
+     Add -still / #still to the hash to skip one-shot entrance animations (used for the PNG captures). -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;800&family=Geist+Mono:wght@400;500&family=VT323&family=Monoton&display=swap">
+<style>
+/* ---------- shared app skeleton (identical in every mockup; 1280x800 reference) ---------- */
+*, *::before, *::after { box-sizing: border-box }
+html, body { margin: 0; height: 100%; }
+body { overflow: hidden; font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+:root {
+  --sans: "Geist", ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+  --mono: "Geist Mono", ui-monospace, Consolas, monospace;
+  --serif: "Instrument Serif", Georgia, "Times New Roman", serif;
+}
+.screen { position: relative; overflow: hidden; width: 100vw; height: 100vh; min-height: 640px; isolation: isolate; }
+.app { position: relative; z-index: 2; display: grid; grid-template-columns: 220px 1fr; height: 100%; }
+.side { display: flex; flex-direction: column; gap: 6px; padding: 22px 16px; font-size: 15px; min-width: 0; position: relative; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 20px; margin-bottom: 14px; }
+.brand svg { width: 30px; height: 30px; flex: none }
+.site { font-size: 14px; padding: 9px 12px; margin-bottom: 10px; display: flex; justify-content: space-between; }
+.nav { padding: 9px 12px; display: flex; justify-content: space-between; align-items: center; }
+.nav .n { font: 500 12.5px var(--mono); }
+.credits { margin-top: auto; font: 500 12.5px var(--mono); padding: 10px 12px; }
+.main { display: flex; flex-direction: column; min-width: 0; padding: 38px 44px 26px; gap: 18px; overflow: hidden; position: relative; }
+.main > * { width: 100%; max-width: var(--col, 880px); }
+.thread { flex: 1; display: flex; flex-direction: column; gap: 26px; min-height: 0; }
+.pin { display: block; }
+.u { margin-left: auto; width: fit-content; max-width: 70%; font-size: 17px; padding: 13px 20px; }
+.turn { display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: start; min-width: 0; }
+.mascot { width: 44px; height: 44px; display: block; }
+.body { display: grid; gap: 16px; min-width: 0; }
+.tools { display: flex; flex-wrap: wrap; gap: 8px; }
+.tool { font: 500 13px var(--mono); padding: 6px 12px; display: inline-flex; gap: 7px; align-items: center; }
+.reply { font-size: 17.5px; line-height: 1.55; padding: 22px 26px; }
+.reply h3 { margin: 0 0 6px; }
+.reply p { margin: 0 0 10px }
+.reply table { width: 100%; border-collapse: collapse; font-size: 16px; }
+.reply td { padding: 9px 12px 9px 0; vertical-align: top; }
+.reply td:first-child { white-space: nowrap; font-weight: 600; padding-right: 22px; width: 1%; }
+.fix { padding: 20px 26px; display: grid; gap: 14px; font-size: 17px; position: relative; }
+.fix .lbl { font: 500 12px var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+.item { display: grid; grid-template-columns: 20px 1fr auto; gap: 12px; align-items: center; position: relative; }
+.box { width: 18px; height: 18px; display: block; }
+.ti { display: none; }
+.tag { font: 500 12px var(--mono); padding: 2px 9px; }
+.composer { font-size: 16px; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+.send { width: 34px; height: 34px; display: grid; place-items: center; flex: none; }
+.loader { display: none; align-items: center; gap: 14px; font-size: 15.5px; min-height: 40px; }
+[data-state="thinking"] .loader { display: flex; }
+[data-state="thinking"] .reply, [data-state="thinking"] .fix, [data-state="thinking"] .next { display: none; }
+.next .tool { cursor: pointer; }
+/* ================= Vaporwave ================= */
+/* Vaporwave 2011. Palette note: magenta + cyan on deep violet IS the genre (sunset, neon tubes, VHS), so it is used
+   deliberately here, not as a default "AI gradient". Two guard rails keep it honest and usable:
+   1) the violet lives only in the scenery; every block of reading text sits on flat Windows-95 grey or near-black;
+   2) neon is reserved for outlines, the brand and the active state, never for body copy. */
+.VW { --deep: #12052a; --plum: #2a0b4a; --mag: #ff4fd8; --pink: #ff2f8f; --cyan: #3ff6ff; --sun: #ffd84a; --org: #ff8a3a;
+  --g: #c0c0c0; --g2: #808080; --navy: #000080; --col: 840px;
+  background: linear-gradient(#0d0322 0%, #2a0b4a 45%, #5a1270 66%, #12052a 66.2%); color: #eee6ff; }
+.VW .stars { position: absolute; inset: 0 0 40% 0; z-index: 0; opacity: .7;
+  background-image: radial-gradient(1.2px 1.2px at 20% 30%, #fff, transparent), radial-gradient(1px 1px at 70% 12%, #fff, transparent), radial-gradient(1.4px 1.4px at 86% 40%, #ffe6fa, transparent), radial-gradient(1px 1px at 45% 22%, #cffaff, transparent), radial-gradient(1px 1px at 58% 48%, #fff, transparent), radial-gradient(1.2px 1.2px at 32% 8%, #fff, transparent);
+  background-size: 420px 300px; }
+/* striped sunset with slits that widen toward the horizon */
+.VW .sun { position: absolute; right: -40px; top: 268px; width: 300px; height: 300px; border-radius: 50%; z-index: 0;
+  background: linear-gradient(#ffd84a 8%, #ff8a3a 48%, #ff2f8f 80%);
+  -webkit-mask-image: linear-gradient(#000 50%, transparent 50% 53%, #000 53% 60%, transparent 60% 64%, #000 64% 70%, transparent 70% 75%, #000 75% 80%, transparent 80% 86%, #000 86% 90%, transparent 90%);
+  mask-image: linear-gradient(#000 50%, transparent 50% 53%, #000 53% 60%, transparent 60% 64%, #000 64% 70%, transparent 70% 75%, #000 75% 80%, transparent 80% 86%, #000 86% 90%, transparent 90%);
+  filter: drop-shadow(0 0 30px rgba(255,79,216,.55)); animation: rise 9s ease-in-out infinite alternate; }
+@keyframes rise { to { transform: translateY(-12px) } }
+.VW .mtn { position: absolute; left: 220px; right: 0; top: 448px; height: 82px; z-index: 1; }
+.VW .palm { position: absolute; z-index: 1; bottom: 262px; transform-origin: 50% 100%; animation: palm 4s ease-in-out infinite alternate; }
+@keyframes palm { to { transform: rotate(2deg) } }
+/* perspective grid floor */
+.VW .floor { position: absolute; left: 0; right: 0; bottom: 0; height: 34%; z-index: 0; overflow: hidden; perspective: 260px; perspective-origin: 62% 0; }
+.VW .floor::before { content: ""; position: absolute; left: -60%; right: -60%; top: 0; height: 200%; transform-origin: 50% 0; transform: rotateX(62deg);
+  background:
+    linear-gradient(90deg, rgba(255,79,216,.9) 2px, transparent 2px) 0 0 / 64px 64px,
+    linear-gradient(rgba(255,79,216,.9) 2px, transparent 2px) 0 0 / 64px 64px;
+  filter: drop-shadow(0 0 4px #ff4fd8); animation: roll 1.6s linear infinite; }
+@keyframes roll { to { background-position: 0 64px, 0 64px } }
+.VW .floor::after { content: ""; position: absolute; inset: 0; background: linear-gradient(#12052a 0%, transparent 30%, transparent 80%, rgba(18,5,42,.6)); }
+/* VHS: scanlines, tracking band, OSD */
+.VW .scan { position: absolute; inset: 0; z-index: 5; pointer-events: none; opacity: .5;
+  background: repeating-linear-gradient(rgba(0,0,0,.18) 0 1px, transparent 1px 2px, rgba(0,0,0,.07) 2px 3px, transparent 3px 4px); }
+.VW .track { position: absolute; left: 0; right: 0; height: 26px; top: 86%; z-index: 1; pointer-events: none; opacity: .22; mix-blend-mode: screen;
+  background: repeating-linear-gradient(90deg, #fff 0 2px, transparent 2px 9px, #fff 9px 10px, transparent 10px 23px); filter: blur(.6px);
+  animation: track 7s linear infinite; }
+@keyframes track { from { top: -5% } to { top: 105% } }
+.VW .osd { position: absolute; z-index: 6; font: 400 28px/1 "VT323", monospace; color: #fff; letter-spacing: .06em;
+  text-shadow: -2px 0 rgba(63,246,255,.8), 2px 0 rgba(255,79,216,.8), 0 0 8px rgba(255,255,255,.35); }
+.VW .osd.play { right: 30px; top: 22px; }
+.VW .osd.play::after { content: ""; display: inline-block; margin-left: 10px; border-left: 16px solid #fff; border-top: 10px solid transparent; border-bottom: 10px solid transparent; animation: osd 1.2s steps(1) infinite; }
+@keyframes osd { 50% { opacity: 0 } }
+.VW .osd.tc { right: 30px; bottom: 22px; font-size: 24px; }
+/* sidebar: dark glass with a cyan tube on its edge */
+.VW .side { background: rgba(10,2,26,.78); box-shadow: inset -2px 0 0 #3ff6ff, 6px 0 18px -6px rgba(63,246,255,.6); }
+.VW .brand { font: 400 30px/1 "Monoton", var(--sans); letter-spacing: .02em; color: #ffe6fa;
+  text-shadow: 0 0 3px #fff, 0 0 10px #ff4fd8, 0 0 22px #ff4fd8, 0 0 40px #ff2f8f; margin: 6px 0 22px; }
+.VW .brand svg { filter: drop-shadow(0 0 6px #3ff6ff); }
+.VW .site { border: 1px solid rgba(63,246,255,.45); color: #cffaff; font-family: var(--mono); }
+.VW .nav { color: #d9c8ff; border: 2px solid transparent; }
+.VW .nav.on { color: #fff; border-color: #ff4fd8; box-shadow: 0 0 10px #ff4fd8, inset 0 0 10px rgba(255,79,216,.6); text-shadow: 0 0 6px #ff4fd8; font-weight: 600; }
+.VW .nav .n { color: #3ff6ff; }
+.VW .credits { font: 400 22px "VT323", monospace; color: #3ff6ff; letter-spacing: .08em; text-shadow: 0 0 6px rgba(63,246,255,.7); }
+/* thread */
+.VW .main { padding-top: 34px; }
+.VW .thread { gap: 20px; }
+.VW .u { background: rgba(10,2,26,.85); color: #fff; border: 2px solid #ff4fd8; box-shadow: 0 0 12px #ff4fd8, inset 0 0 12px rgba(255,79,216,.4); border-radius: 4px; }
+.VW .tool { background: rgba(10,2,26,.85); color: #cffaff; border: 1px solid #3ff6ff; box-shadow: 0 0 8px rgba(63,246,255,.5); }
+.VW .tool.ok::before { content: "\2713"; color: #3ff6ff; }
+.VW .tool.run { color: #fff; border-color: #ff4fd8; box-shadow: 0 0 10px #ff4fd8; }
+.VW .next .tool { font: 400 22px/1 "VT323", monospace; letter-spacing: .06em; padding: 4px 12px; color: #fff; border-color: #ff4fd8; box-shadow: 0 0 8px rgba(255,79,216,.7); }
+.VW .next .tool::before { content: "\25B6"; font-size: 13px; color: #ff4fd8; }
+/* Windows-95 windows carry the real content: flat grey, black text, bevels */
+.VW .win { background: var(--g); color: #101010; padding: 0 0 16px; border-radius: 0;
+  box-shadow: inset 1px 1px #fff, inset -1px -1px #0a0a0a, inset 2px 2px #dfdfdf, inset -2px -2px var(--g2), 8px 8px 0 rgba(10,2,26,.55); }
+.VW .win > :not(.tbar) { margin-left: 22px; margin-right: 22px; }
+.VW .win table { width: calc(100% - 44px); }
+.VW .tbar { display: flex; justify-content: space-between; align-items: center; margin: 3px 3px 14px; padding: 4px 4px 4px 10px;
+  background: linear-gradient(90deg, #000080, #6a1b9a 55%, #ff4fd8); color: #fff; font: 400 21px/1 "VT323", monospace; letter-spacing: .06em; }
+.VW .tbar .wb { display: flex; gap: 3px; }
+.VW .tbar .wb i { width: 20px; height: 18px; background: var(--g); color: #000; font: 700 12px/18px var(--sans); font-style: normal; text-align: center;
+  box-shadow: inset 1px 1px #fff, inset -1px -1px #0a0a0a, inset -2px -2px var(--g2); }
+.VW .reply h3 { font: 800 30px/1.05 var(--sans); letter-spacing: -.01em; margin-bottom: 8px; text-shadow: -2px 0 rgba(0,190,210,.75), 2px 0 rgba(255,47,143,.75); }
+.VW .reply td { border-top: 1px solid var(--g2); box-shadow: 0 -1px 0 #fff inset; }
+.VW .fix { gap: 10px; }
+.VW .fix .lbl { display: none; color: #000080; font: 400 20px/1 "VT323", monospace; letter-spacing: .1em; }
+.VW .box { width: 18px; height: 18px; background: #fff; box-shadow: inset 1px 1px var(--g2), inset -1px -1px #fff, inset 2px 2px #0a0a0a, inset -2px -2px #dfdfdf; position: relative; }
+.VW .item.done .box::after { content: "\2714"; position: absolute; inset: 0; display: grid; place-items: center; font: 700 14px/1 var(--sans); color: #000; }
+.VW .item.done .t2 { color: #555; text-decoration: line-through; }
+.VW .tag { font: 400 18px/1 "VT323", monospace; padding: 3px 10px; background: var(--g); box-shadow: inset 1px 1px #fff, inset -1px -1px #0a0a0a, inset -2px -2px var(--g2); }
+.VW .t-high { color: #c4006e; }
+.VW .done-osd { position: absolute; left: 318px; top: 50%; transform: translateY(-50%); font: 400 20px/1 "VT323", monospace; color: #fff; background: #000080; padding: 3px 8px;
+  text-shadow: -1px 0 #3ff6ff, 1px 0 #ff4fd8; animation: osd 1.2s steps(1) 3 .6s; }
+.VW .composer { background: rgba(10,2,26,.94); border: 2px solid #3ff6ff; box-shadow: 0 0 12px rgba(63,246,255,.7), inset 0 0 10px rgba(63,246,255,.25); color: #bfb0e8; }
+.VW .send { background: #ff4fd8; color: #12052a; border-radius: 50%; box-shadow: 0 0 14px #ff4fd8; font-weight: 800; }
+.VW .loader { background: var(--g); color: #101010; padding: 14px 18px; width: fit-content; box-shadow: inset 1px 1px #fff, inset -1px -1px #0a0a0a, inset -2px -2px var(--g2); font: 400 22px "VT323", monospace; }
+.VW .loader .bar { width: 220px; height: 24px; background: #fff; padding: 3px; display: flex; gap: 2px; box-shadow: inset 1px 1px var(--g2), inset -1px -1px #fff; }
+.VW .loader .bar i { width: 12px; background: #000080; animation: fill 2.4s steps(1) infinite; }
+.VW .loader .bar i:nth-child(n+6) { animation-name: fill2 } .VW .loader .bar i:nth-child(n+11) { animation-name: fill3 }
+@keyframes fill { 0% { opacity: 0 } 20% { opacity: 1 } }
+@keyframes fill2 { 0%, 40% { opacity: 0 } 50% { opacity: 1 } }
+@keyframes fill3 { 0%, 70% { opacity: 0 } 80% { opacity: 1 } }
+.VW .mascot { filter: drop-shadow(0 0 6px #ff4fd8); }
+@media (prefers-reduced-motion: reduce) { .screen *, .screen *::before, .screen *::after { animation: none !important; } }
+</style>
+</head>
+<body data-state="done">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs></defs></svg>
+<div class="screen VW">
+  <div class="stars" aria-hidden="true"></div>
+  <div class="sun" aria-hidden="true"></div>
+  <svg class="mtn" viewBox="0 0 1060 82" preserveAspectRatio="none" aria-hidden="true"><path d="M0 82 90 40 150 62 260 14 340 56 420 30 520 70 600 22 700 58 790 8 880 50 960 26 1060 60V82Z" fill="#1a0636" stroke="#ff4fd8" stroke-width="2" style="filter:drop-shadow(0 0 4px #ff4fd8)"/><path d="M90 40 120 82M260 14 250 82M260 14 300 82M600 22 580 82M790 8 760 82M790 8 840 82M960 26 990 82" stroke="#ff4fd8" stroke-width="1" opacity=".6"/></svg>
+  <div class="floor" aria-hidden="true"></div>
+  <svg class="palm" style="right:250px;width:90px" viewBox="0 0 90 170" aria-hidden="true"><path d="M44 170C46 120 48 80 42 40" stroke="#0a0118" stroke-width="7" fill="none"/><g fill="#0a0118"><path d="M42 40C30 20 10 18 0 30 14 26 26 30 42 40Z"/><path d="M42 40C40 18 54 4 70 4 58 12 50 24 42 40Z"/><path d="M42 40C58 26 80 28 90 40 74 36 58 38 42 40Z"/><path d="M42 40C28 40 12 52 8 66 20 54 30 48 42 40Z"/><path d="M42 40C56 46 66 60 66 74 60 60 52 52 42 40Z"/></g></svg>
+  <svg class="palm" style="right:60px;width:70px;animation-delay:-2s" viewBox="0 0 90 170" aria-hidden="true"><path d="M44 170C46 120 48 80 42 40" stroke="#0a0118" stroke-width="7" fill="none"/><g fill="#0a0118"><path d="M42 40C30 20 10 18 0 30 14 26 26 30 42 40Z"/><path d="M42 40C40 18 54 4 70 4 58 12 50 24 42 40Z"/><path d="M42 40C58 26 80 28 90 40 74 36 58 38 42 40Z"/><path d="M42 40C28 40 12 52 8 66 20 54 30 48 42 40Z"/><path d="M42 40C56 46 66 60 66 74 60 60 52 52 42 40Z"/></g></svg>
+  <div class="app">
+    <aside class="side ">
+      <div class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="8" fill="none" stroke="#3ff6ff" stroke-width="2"/><ellipse cx="16" cy="16" rx="14" ry="5" fill="none" stroke="#ff4fd8" stroke-width="2" transform="rotate(-20 16 16)"/></svg><span>orbit</span></div>
+      <div class="site "><span class="t">yourbrand.in</span><span class="t">&#9662;</span></div>
+      <div class="nav on "><span class="t">Chat</span></div>
+      <div class="nav"><span class="t">Action plan</span><span class="n">11</span></div>
+      <div class="nav"><span class="t">Documents</span><span class="n">4</span></div>
+      <div class="nav"><span class="t">Playbooks</span></div>
+      <div class="nav"><span class="t">Sites</span></div>
+      <div class="credits">81 credits</div>
+    </aside>
+    <main class="main">
+      <div class="thread">
+        <div class="pin"><div class="u ">Why did my traffic drop last month?</div></div>
+        <div class="turn">
+          <svg class="mascot" viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="vwm" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd84a"/><stop offset=".55" stop-color="#ff8a3a"/><stop offset="1" stop-color="#ff2f8f"/></linearGradient></defs><path fill="url(#vwm)" stroke="#fff" stroke-width="1.2" d="M16 3C8.8 3 3 8.2 3 14.6c0 3.5 1.7 6.6 4.5 8.7L6 29l6.4-3.4c1.1.3 2.4.4 3.6.4 7.2 0 13-5.2 13-11.4S23.2 3 16 3Z"/><rect x="8" y="11.5" width="16" height="4.4" rx="1" fill="#12052a"/><rect x="9" y="12.3" width="5" height="1.2" fill="#3ff6ff"/><path d="M12.5 20q3.5 2 7 0" stroke="#12052a" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>
+          <div class="body">
+            <div class="tools"><span class="tool ok "><i class="ti"></i>Search Console</span><span class="tool ok "><i class="ti"></i>SERP analysis</span><span class="tool run "><i class="ti"></i>Competitor pages</span></div>
+            <div class="loader"><span>RESEARCH.EXE</span><span class="bar" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span>64%</span></div>
+            <div class="pin"><div class="reply win"><div class="tbar"><span>FINDINGS.TXT</span><span class="wb" aria-hidden="true"><i>_</i><i>&#9633;</i><i>&times;</i></span></div>
+              <h3>Clicks fell 23%</h3>
+              <p>It isn't a penalty. Two of your pages compete for the same search, and the server is slow to answer.</p>
+              <table><tbody>
+                <tr><td>Pages competing</td><td>/blog/ai-receptionist and /compare target the same query</td></tr>
+                <tr><td>Speed</td><td>Server waits 1.8 s before sending the page</td></tr>
+                <tr><td>Lost rankings</td><td>&ldquo;ai receptionist&rdquo; slipped from #4 to #11 on mobile</td></tr>
+              </tbody></table>
+            </div></div>
+            <div class="pin"><div class="fix win"><div class="tbar"><span>FIX THIS WEEK &mdash; TODO.EXE</span><span class="wb" aria-hidden="true"><i>_</i><i>&#9633;</i><i>&times;</i></span></div>
+              <span class="lbl">Fix this week</span>
+              <div class="item done"><span class="box "></span><span class="t2">Merge the two competing pages</span><span class="tag t-high">High</span><span class="done-osd" aria-hidden="true">&#10003; COMPLETE</span></div>
+              <div class="item"><span class="box"></span><span class="t2">Add FAQ schema to pricing</span><span class="tag t-aeo">AEO</span></div>
+              <div class="item"><span class="box"></span><span class="t2">Compress hero images</span><span class="tag t-speed">Speed</span></div>
+            </div></div>
+            <div class="tools next"><span class="tool sug ">Show both pages</span><span class="tool sug ">Draft the redirect</span><span class="tool sug ">Check speed again</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="pin"><div class="composer "><span>Ask in English or Hinglish&hellip;</span><span class="send">&#8593;</span></div></div>
+    </main>
+  </div>
+  <div class="scan" aria-hidden="true"></div>
+  <div class="track" aria-hidden="true"></div>
+  <div class="osd play" aria-hidden="true">PLAY</div>
+  <div class="osd tc" aria-hidden="true">SP&nbsp;&nbsp;0:04:21</div>
+</div>
+<script>
+(() => {
+  // State: "done" by default; open with #thinking to see the loader state.
+  // Add "still" to the hash (#still, #thinking-still) to jump one-shot entrances to their end, for screenshots.
+  const state = location.hash.includes("thinking") ? "thinking" : "done";
+  document.body.dataset.state = state;
+  if (state === "done") document.querySelectorAll(".tool.run").forEach(t => t.classList.replace("run", "ok"));
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (location.hash.includes("still")) requestAnimationFrame(() => document.getAnimations().forEach(a => {
+    if (a.effect && a.effect.getComputedTiming().iterations !== Infinity) a.finish();
+  }));
+  function rand(seed) { return () => ((seed = (seed * 16807) % 2147483647) / 2147483647); }
+
+})();
+</script>
+</body>
+</html>

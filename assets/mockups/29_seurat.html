@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orbit · Seurat pointillism</title>
+<!-- Web art style mockup: Seurat pointillism (29_seurat). Self-contained: only Google Fonts are external.
+     Reference size 1280x800. Append #thinking to the URL for the loader state.
+     Add -still / #still to the hash to skip one-shot entrance animations (used for the PNG captures). -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;1,500&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* ---------- shared app skeleton (identical in every mockup; 1280x800 reference) ---------- */
+*, *::before, *::after { box-sizing: border-box }
+html, body { margin: 0; height: 100%; }
+body { overflow: hidden; font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+:root {
+  --sans: "Geist", ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+  --mono: "Geist Mono", ui-monospace, Consolas, monospace;
+  --serif: "Instrument Serif", Georgia, "Times New Roman", serif;
+}
+.screen { position: relative; overflow: hidden; width: 100vw; height: 100vh; min-height: 640px; isolation: isolate; }
+.app { position: relative; z-index: 2; display: grid; grid-template-columns: 220px 1fr; height: 100%; }
+.side { display: flex; flex-direction: column; gap: 6px; padding: 22px 16px; font-size: 15px; min-width: 0; position: relative; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 20px; margin-bottom: 14px; }
+.brand svg { width: 30px; height: 30px; flex: none }
+.site { font-size: 14px; padding: 9px 12px; margin-bottom: 10px; display: flex; justify-content: space-between; }
+.nav { padding: 9px 12px; display: flex; justify-content: space-between; align-items: center; }
+.nav .n { font: 500 12.5px var(--mono); }
+.credits { margin-top: auto; font: 500 12.5px var(--mono); padding: 10px 12px; }
+.main { display: flex; flex-direction: column; min-width: 0; padding: 38px 44px 26px; gap: 18px; overflow: hidden; position: relative; }
+.main > * { width: 100%; max-width: var(--col, 880px); }
+.thread { flex: 1; display: flex; flex-direction: column; gap: 26px; min-height: 0; }
+.pin { display: block; }
+.u { margin-left: auto; width: fit-content; max-width: 70%; font-size: 17px; padding: 13px 20px; }
+.turn { display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: start; min-width: 0; }
+.mascot { width: 44px; height: 44px; display: block; }
+.body { display: grid; gap: 16px; min-width: 0; }
+.tools { display: flex; flex-wrap: wrap; gap: 8px; }
+.tool { font: 500 13px var(--mono); padding: 6px 12px; display: inline-flex; gap: 7px; align-items: center; }
+.reply { font-size: 17.5px; line-height: 1.55; padding: 22px 26px; }
+.reply h3 { margin: 0 0 6px; }
+.reply p { margin: 0 0 10px }
+.reply table { width: 100%; border-collapse: collapse; font-size: 16px; }
+.reply td { padding: 9px 12px 9px 0; vertical-align: top; }
+.reply td:first-child { white-space: nowrap; font-weight: 600; padding-right: 22px; width: 1%; }
+.fix { padding: 20px 26px; display: grid; gap: 14px; font-size: 17px; position: relative; }
+.fix .lbl { font: 500 12px var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+.item { display: grid; grid-template-columns: 20px 1fr auto; gap: 12px; align-items: center; position: relative; }
+.box { width: 18px; height: 18px; display: block; }
+.ti { display: none; }
+.tag { font: 500 12px var(--mono); padding: 2px 9px; }
+.composer { font-size: 16px; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+.send { width: 34px; height: 34px; display: grid; place-items: center; flex: none; }
+.loader { display: none; align-items: center; gap: 14px; font-size: 15.5px; min-height: 40px; }
+[data-state="thinking"] .loader { display: flex; }
+[data-state="thinking"] .reply, [data-state="thinking"] .fix, [data-state="thinking"] .next { display: none; }
+.next .tool { cursor: pointer; }
+/* ================= Seurat pointillism ================= */
+/* Seurat 1884: the scenery is painted only in pure-colour dots that mix in the eye; reading panels stay flat cream
+   and wear a dotted band as their frame, the way Seurat painted his own dotted borders. */
+.SR { --cream: #fbf6e8; --ink: #1f2340; --navy: #1a2058; --blue: #2a3a9a; --org: #f08a2a; --red: #e0432a; --grn: #2f9a5a; --yel: #f2cf3a; --vio: #7a4aa8; --col: 862px;
+  --sans: "Lora", Georgia, serif; --serif: "Playfair Display", Georgia, serif;
+  background: #e9e2c8; color: var(--ink); font-family: var(--sans); }
+.SR canvas.dots { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; }
+/* dotted frame band: two interleaved dot lattices over a pale ground, clipped to the border box */
+.SR .dotb { --d1: var(--org); --d2: var(--blue); --d0: #f6e49a; border: 9px solid transparent;
+  background:
+    linear-gradient(var(--cream), var(--cream)) padding-box,
+    radial-gradient(circle, var(--d1) 0 2.1px, transparent 2.6px) 0 0 / 7px 7px border-box,
+    radial-gradient(circle, var(--d2) 0 2.1px, transparent 2.6px) 3.5px 3.5px / 7px 7px border-box,
+    var(--d0) border-box; }
+.SR .dotb.sky { --d1: #3f6fd0; --d2: #f8f4e8; --d0: #b0cff0; }
+.SR .dotb.grn { --d1: var(--grn); --d2: var(--yel); --d0: #cfe08a; }
+.SR .side { color: #f8f4e8; padding-top: 24px; background: linear-gradient(rgba(22,27,78,.8), rgba(22,27,78,.8)) 10px 10px / calc(100% - 20px) calc(100% - 20px) no-repeat; }
+.SR .side > * { margin-inline: 6px; }
+.SR .brand { font: italic 500 32px/1 var(--serif); letter-spacing: .01em; text-shadow: 0 2px 6px rgba(10,14,50,.7); }
+.SR .site { color: var(--ink); --d1: var(--yel); --d2: var(--org); --d0: #f6c48a; border-width: 6px; }
+.SR .nav { font-size: 16px; text-shadow: 0 1px 4px rgba(10,14,50,.9); }
+.SR .nav.on { color: var(--ink); text-shadow: none; font-weight: 600; border-width: 6px; }
+.SR .nav .n { font: 500 14px var(--sans); background: rgba(248,244,232,.92); color: var(--navy); border-radius: 99px; padding: 0 8px; text-shadow: none; }
+.SR .credits { font: italic 400 16px var(--sans); color: #f8f4e8; text-shadow: 0 1px 4px rgba(10,14,50,.9); }
+.SR .main { padding-top: 32px; }
+.SR .thread { gap: 20px; }
+.SR .u { font: italic 400 19px var(--sans); color: var(--navy); padding: 10px 22px; }
+.SR .tool { background: var(--cream); border: 2.5px dotted var(--blue); font: 500 13.5px var(--sans); color: var(--navy); }
+.SR .tool.ok::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, var(--grn) 0 2px, transparent 2.5px), radial-gradient(circle at 72% 40%, var(--yel) 0 2px, transparent 2.5px), radial-gradient(circle at 45% 76%, var(--blue) 0 2px, transparent 2.5px); }
+.SR .tool.run::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--org); animation: breathe 1s ease-in-out infinite; }
+.SR .next .tool { border-color: var(--org); font-style: italic; font-size: 15px; }
+.SR .reply { padding: 16px 24px; }
+.SR .reply td { padding-top: 7px; padding-bottom: 7px; }
+.SR .reply h3 { font: italic 500 34px/1.05 var(--serif); color: var(--navy); margin-bottom: 8px; }
+.SR .reply td { border-top: 2px dotted rgba(42,58,154,.4); }
+.SR .reply td:first-child { font-variant: small-caps; letter-spacing: .04em; font-size: 17px; color: var(--blue); }
+.SR .fix { padding: 14px 24px; gap: 10px; }
+.SR .fix .lbl { font: italic 500 18px var(--serif); letter-spacing: .02em; text-transform: none; color: #1f6a52; }
+.SR .box { width: 20px; height: 20px; border-radius: 50%; border: 2.5px dotted var(--navy); position: relative; }
+.SR .item.done .box { border: 0; background: radial-gradient(circle at 35% 35%, #3f6fd0 0 3px, transparent 3.5px), radial-gradient(circle at 68% 45%, var(--navy) 0 3px, transparent 3.5px), radial-gradient(circle at 42% 72%, #7a4aa8 0 3px, transparent 3.5px), var(--blue); border-radius: 50%; }
+/* complementary halo: orange dots around the blue mark, breathing */
+.SR .item.done .box::after { content: ""; position: absolute; inset: -13px; border-radius: 50%;
+  background: radial-gradient(circle, var(--org) 0 2px, transparent 2.6px) 0 0 / 7px 7px, radial-gradient(circle, var(--yel) 0 2px, transparent 2.6px) 3.5px 3.5px / 7px 7px;
+  -webkit-mask-image: radial-gradient(circle, transparent 11px, #000 12px 19px, transparent 21px); mask-image: radial-gradient(circle, transparent 11px, #000 12px 19px, transparent 21px);
+  animation: breathe 2.4s ease-in-out infinite; }
+@keyframes breathe { 50% { transform: scale(1.12); opacity: .75 } }
+.SR .item.done .t2 { color: #6a6a80; text-decoration: line-through; text-decoration-style: dotted; text-decoration-thickness: 2px; }
+.SR .tag { font: italic 400 14px var(--sans); border: 2px dotted currentColor; border-radius: 99px; padding: 0 10px; }
+.SR .t-high { color: #b8301e; } .SR .t-aeo { color: var(--blue); } .SR .t-speed { color: #1f6a52; }
+.SR .composer { color: #6a6a80; font-style: italic; font-size: 17px; padding: 8px 10px 8px 20px; }
+.SR .send { width: 40px; height: 40px; border-radius: 50%; color: #1a2058; font-weight: 800; font-size: 20px; text-shadow: 0 0 3px #fff, 0 0 6px #fff;
+  background: radial-gradient(circle, #e0432a 0 2px, transparent 2.6px) 0 0 / 6px 6px, radial-gradient(circle, #f2cf3a 0 2px, transparent 2.6px) 3px 3px / 6px 6px, var(--org); }
+.SR .loader span:last-child { font: italic 400 20px var(--sans); color: var(--navy); }
+.SR .loader .pts { display: flex; gap: 6px; }
+.SR .loader .pts i { width: 12px; height: 12px; border-radius: 50%; animation: dab 1.4s steps(1) infinite; }
+.SR .loader .pts i:nth-child(1) { background: var(--blue) } .SR .loader .pts i:nth-child(2) { background: var(--org); animation-delay: .2s }
+.SR .loader .pts i:nth-child(3) { background: var(--grn); animation-delay: .4s } .SR .loader .pts i:nth-child(4) { background: var(--yel); animation-delay: .6s }
+.SR .loader .pts i:nth-child(5) { background: var(--vio); animation-delay: .8s } .SR .loader .pts i:nth-child(6) { background: var(--red); animation-delay: 1s }
+@keyframes dab { 0%, 40% { opacity: 1; transform: scale(1) } 50%, 100% { opacity: .15; transform: scale(.6) } }
+@media (prefers-reduced-motion: reduce) { .screen *, .screen *::before, .screen *::after { animation: none !important; } }
+</style>
+</head>
+<body data-state="done">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><pattern id="pt" width="4" height="4" patternUnits="userSpaceOnUse"><rect width="4" height="4" fill="#f6c48a"/><circle cx="1" cy="1" r=".95" fill="#f08a2a"/><circle cx="3" cy="3" r=".95" fill="#e0432a"/><circle cx="3" cy="1" r=".7" fill="#f2cf3a"/><circle cx="1" cy="3" r=".6" fill="#7a4aa8"/></pattern></defs></svg>
+<div class="screen SR">
+  <canvas class="dots" aria-hidden="true"></canvas>
+  <div class="app">
+    <aside class="side ">
+      <div class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="9" fill="url(#pt)"/><g fill="#f8f4e8"><circle cx="3" cy="20" r="1.4"/><circle cx="7" cy="22" r="1.4"/><circle cx="11" cy="23.4" r="1.4"/><circle cx="25" cy="10" r="1.4"/><circle cx="29" cy="12" r="1.4"/><circle cx="21" cy="8.6" r="1.4"/></g></svg><span>Orbit</span></div>
+      <div class="site dotb"><span class="t">yourbrand.in</span><span class="t">&#9662;</span></div>
+      <div class="nav on dotb"><span class="t">Chat</span></div>
+      <div class="nav"><span class="t">Action plan</span><span class="n">11</span></div>
+      <div class="nav"><span class="t">Documents</span><span class="n">4</span></div>
+      <div class="nav"><span class="t">Playbooks</span></div>
+      <div class="nav"><span class="t">Sites</span></div>
+      <div class="credits">81 credits</div>
+    </aside>
+    <main class="main">
+      <div class="thread">
+        <div class="pin"><div class="u dotb sky">Why did my traffic drop last month?</div></div>
+        <div class="turn">
+          <svg class="mascot" viewBox="0 0 32 32" aria-hidden="true"><path fill="url(#pt)" stroke="#1a2058" stroke-width="1" stroke-dasharray="1 1.4" d="M16 3C8.8 3 3 8.2 3 14.6c0 3.5 1.7 6.6 4.5 8.7L6 29l6.4-3.4c1.1.3 2.4.4 3.6.4 7.2 0 13-5.2 13-11.4S23.2 3 16 3Z"/><circle cx="12" cy="14" r="2" fill="#1a2058"/><circle cx="20" cy="14" r="2" fill="#1a2058"/><g fill="#1a2058"><circle cx="12.6" cy="19.6" r=".9"/><circle cx="14.6" cy="20.6" r=".9"/><circle cx="17" cy="20.6" r=".9"/><circle cx="19.2" cy="19.6" r=".9"/></g></svg>
+          <div class="body">
+            <div class="tools"><span class="tool ok "><i class="ti"></i>Search Console</span><span class="tool ok "><i class="ti"></i>SERP analysis</span><span class="tool run "><i class="ti"></i>Competitor pages</span></div>
+            <div class="loader"><span class="pts" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span><span>Placing every dot&hellip;</span></div>
+            <div class="pin"><div class="reply dotb">
+              <h3>Clicks fell 23%</h3>
+              <p>It isn't a penalty. Two of your pages compete for the same search, and the server is slow to answer.</p>
+              <table><tbody>
+                <tr><td>Pages competing</td><td>/blog/ai-receptionist and /compare target the same query</td></tr>
+                <tr><td>Speed</td><td>Server waits 1.8 s before sending the page</td></tr>
+                <tr><td>Lost rankings</td><td>&ldquo;ai receptionist&rdquo; slipped from #4 to #11 on mobile</td></tr>
+              </tbody></table>
+            </div></div>
+            <div class="pin"><div class="fix dotb grn">
+              <span class="lbl">Fix this week</span>
+              <div class="item done"><span class="box "></span><span class="t2">Merge the two competing pages</span><span class="tag t-high">High</span></div>
+              <div class="item"><span class="box"></span><span class="t2">Add FAQ schema to pricing</span><span class="tag t-aeo">AEO</span></div>
+              <div class="item"><span class="box"></span><span class="t2">Compress hero images</span><span class="tag t-speed">Speed</span></div>
+            </div></div>
+            <div class="tools next"><span class="tool sug ">Show both pages</span><span class="tool sug ">Draft the redirect</span><span class="tool sug ">Check speed again</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="pin"><div class="composer dotb"><span>Ask in English or Hinglish&hellip;</span><span class="send">&#8593;</span></div></div>
+    </main>
+  </div>
+
+</div>
+<script>
+(() => {
+  // State: "done" by default; open with #thinking to see the loader state.
+  // Add "still" to the hash (#still, #thinking-still) to jump one-shot entrances to their end, for screenshots.
+  const state = location.hash.includes("thinking") ? "thinking" : "done";
+  document.body.dataset.state = state;
+  if (state === "done") document.querySelectorAll(".tool.run").forEach(t => t.classList.replace("run", "ok"));
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (location.hash.includes("still")) requestAnimationFrame(() => document.getAnimations().forEach(a => {
+    if (a.effect && a.effect.getComputedTiming().iterations !== Infinity) a.finish();
+  }));
+  function rand(seed) { return () => ((seed = (seed * 16807) % 2147483647) / 2147483647); }
+  // Pointillist renderer: paint a flat underpainting offscreen, then cover the screen in equal dots on a hex grid.
+  // Each dot takes one of two pure palette colours whose optical mix approximates the target; 8% become complements.
+  const cv = document.querySelector(".SR canvas.dots"), ctx = cv.getContext("2d");
+  const PAL = ["#1a2058","#2a3a9a","#3f6fd0","#6aaee6","#1f6a52","#2f9a5a","#a8c83a","#f2cf3a","#f08a2a","#e0432a","#c0306a","#7a4aa8","#f8f4e8","#e8b48a",
+               "#f6e49a","#f6c48a","#cfe08a","#b0cff0","#f2b8c8","#c99a4a","#9a7ac8"].map(h => [1,3,5].map(i => parseInt(h.slice(i, i + 2), 16)));
+  const COMP = { 1: 8, 2: 8, 3: 15, 5: 10, 6: 10, 7: 11, 8: 2, 9: 5, 11: 7, 4: 9 };
+  const cache = new Map();
+  function pick(r, g, b) {
+    const key = (r >> 3) << 10 | (g >> 3) << 5 | (b >> 3);
+    if (cache.has(key)) return cache.get(key);
+    let best = [0, 0, 1], bd = 1e9;
+    for (let i = 0; i < PAL.length; i++) for (let j = i; j < PAL.length; j++) {
+      const P = PAL[i], Q = PAL[j], dx = P[0] - Q[0], dy = P[1] - Q[1], dz = P[2] - Q[2], L = dx * dx + dy * dy + dz * dz;
+      let w = L ? ((r - Q[0]) * dx + (g - Q[1]) * dy + (b - Q[2]) * dz) / L : 1; w = Math.min(.8, Math.max(.2, w));
+      if (i === j) w = 1;
+      const mr = Q[0] + dx * w, mg = Q[1] + dy * w, mb = Q[2] + dz * w;
+      const d = (mr - r) ** 2 + (mg - g) ** 2 + (mb - b) ** 2 + 0.004 * L;
+      if (d < bd) { bd = d; best = [i, j, w]; }
+    }
+    cache.set(key, best); return best;
+  }
+  const hash = (x, y, s) => { let h = (x * 374761393 + y * 668265263 + s * 2147483647) | 0; h = (h ^ (h >>> 13)) * 1274126177 | 0; return ((h ^ (h >>> 16)) >>> 0) / 4294967295; };
+  let W, H, dots = [];
+  function under(c) {
+    // flat underpainting: night-blue sidebar, then a Grande Jatte afternoon: sky, far bank, river, lawn, shade, a lady with a parasol
+    const g = c.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, "#9cc2e6"); g.addColorStop(.28, "#e7e4c6"); g.addColorStop(.36, "#d9d4a4");
+    c.fillStyle = g; c.fillRect(0, 0, W, H);
+    c.fillStyle = "#4d7a52"; c.beginPath(); c.moveTo(0, H * .30);
+    for (let x = 0; x <= W; x += 40) c.lineTo(x, H * .30 - 18 - 14 * Math.sin(x / 70) - 10 * Math.sin(x / 23)); c.lineTo(W, H * .36); c.lineTo(0, H * .36); c.fill();
+    c.fillStyle = "#5f93c8"; c.fillRect(0, H * .36, W, H * .14);
+    const lawn = c.createLinearGradient(0, H * .5, 0, H); lawn.addColorStop(0, "#9cc25a"); lawn.addColorStop(1, "#4f8a3c");
+    c.fillStyle = lawn; c.fillRect(0, H * .5, W, H * .5);
+    c.fillStyle = "#2f5a3a"; c.beginPath(); c.ellipse(W * .78, H * .78, W * .32, H * .12, -.08, 0, 7); c.fill();
+    c.fillStyle = "#e9a24a"; c.beginPath(); c.ellipse(W * .9, H * .58, 70, 16, 0, 0, 7); c.fill();
+    // tree trunk and canopy on the right
+    c.fillStyle = "#3a3a5a"; c.fillRect(W - 78, H * .1, 16, H * .58);
+    c.fillStyle = "#2f6a42"; c.beginPath(); c.ellipse(W - 70, H * .1, 110, 90, 0, 0, 7); c.fill();
+    // lady with parasol (profile silhouette)
+    const lx = W - 150, ly = H * .5;
+    c.fillStyle = "#2a2a5e"; c.beginPath(); c.moveTo(lx, ly); c.quadraticCurveTo(lx + 44, ly + 60, lx + 40, ly + 170); c.lineTo(lx - 30, ly + 170);
+    c.quadraticCurveTo(lx - 34, ly + 80, lx - 6, ly); c.fill();
+    c.beginPath(); c.ellipse(lx + 34, ly + 110, 26, 40, 0, 0, 7); c.fill();
+    c.beginPath(); c.arc(lx - 2, ly - 16, 13, 0, 7); c.fill();
+    c.fillStyle = "#c0306a"; c.beginPath(); c.arc(lx - 14, ly - 34, 40, Math.PI, 0); c.fill();
+    // sidebar: deep twilight blue
+    const sb = c.createLinearGradient(0, 0, 0, H); sb.addColorStop(0, "#26306e"); sb.addColorStop(1, "#1a2058");
+    c.fillStyle = sb; c.fillRect(0, 0, 220, H);
+    // Seurat's own painted border
+    c.strokeStyle = "#1a2058"; c.lineWidth = 22; c.strokeRect(220, 0, W - 220, H);
+  }
+  function build() {
+    const r = cv.getBoundingClientRect(), d = Math.min(2, devicePixelRatio || 1);
+    W = r.width; H = r.height; cv.width = W * d; cv.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0);
+    const off = document.createElement("canvas"); off.width = W; off.height = H;
+    const oc = off.getContext("2d"); under(oc);
+    const px = oc.getImageData(0, 0, W, H).data;
+    dots = [];
+    const P = 9, R = 4.1, RH = P * .866;
+    for (let row = 0, y = 2; y < H + P; row++, y += RH) for (let x = (row % 2) * P / 2; x < W + P; x += P) {
+      const ix = Math.min(W - 1, Math.max(0, x | 0)), iy = Math.min(H - 1, Math.max(0, y | 0)), k = (iy * W + ix) * 4;
+      const dj = (hash(ix, iy, 1) - .5) * 40;
+      const [i, j, w] = pick(px[k] + dj, px[k + 1] + dj * .8, px[k + 2] - dj * .6);
+      const h = hash(ix, iy, 2);
+      let c = h < w ? i : j;
+      if (hash(ix, iy, 3) < .08 && COMP[c] !== undefined) c = COMP[c];
+      dots.push({ x: x + (hash(ix, iy, 4) - .5) * 2.4, y: y + (hash(ix, iy, 5) - .5) * 2.4, i, j, w, c, s: hash(ix, iy, 6) });
+    }
+    off.width = off.height = 0;
+    ctx.fillStyle = "#e9e2c8"; ctx.fillRect(0, 0, W, H);
+    paint(0);
+    function paint(step) {
+      const paths = PAL.map(() => new Path2D());
+      for (const t of dots) {
+        let c = t.c;
+        if (step && hash(t.x | 0, step, 7) < .07) c = t.c === t.i ? t.j : t.i;   // light trembles between paired colours
+        paths[c].moveTo(t.x + R, t.y); paths[c].arc(t.x, t.y, R, 0, 6.2832);
+      }
+      ctx.fillStyle = "#ece6cf"; ctx.fillRect(0, 0, W, H);
+      PAL.forEach((p, n) => { ctx.fillStyle = `rgb(${p})`; ctx.fill(paths[n]); });
+    }
+    if (!reduce) { let s = 0; clearInterval(window.__sr); window.__sr = setInterval(() => paint(++s), 1000 / 6); }
+  }
+  build(); addEventListener("resize", build);
+})();
+</script>
+</body>
+</html>

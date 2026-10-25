@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orbit · Ghibli watercolour</title>
+<!-- Web art style mockup: Ghibli watercolour (25_ghibli). Self-contained: only Google Fonts are external.
+     Reference size 1280x800. Append #thinking to the URL for the loader state.
+     Add -still / #still to the hash to skip one-shot entrance animations (used for the PNG captures). -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;800&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap">
+<style>
+/* ---------- shared app skeleton (identical in every mockup; 1280x800 reference) ---------- */
+*, *::before, *::after { box-sizing: border-box }
+html, body { margin: 0; height: 100%; }
+body { overflow: hidden; font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+:root {
+  --sans: "Geist", ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+  --mono: "Geist Mono", ui-monospace, Consolas, monospace;
+  --serif: "Instrument Serif", Georgia, "Times New Roman", serif;
+}
+.screen { position: relative; overflow: hidden; width: 100vw; height: 100vh; min-height: 640px; isolation: isolate; }
+.app { position: relative; z-index: 2; display: grid; grid-template-columns: 220px 1fr; height: 100%; }
+.side { display: flex; flex-direction: column; gap: 6px; padding: 22px 16px; font-size: 15px; min-width: 0; position: relative; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 20px; margin-bottom: 14px; }
+.brand svg { width: 30px; height: 30px; flex: none }
+.site { font-size: 14px; padding: 9px 12px; margin-bottom: 10px; display: flex; justify-content: space-between; }
+.nav { padding: 9px 12px; display: flex; justify-content: space-between; align-items: center; }
+.nav .n { font: 500 12.5px var(--mono); }
+.credits { margin-top: auto; font: 500 12.5px var(--mono); padding: 10px 12px; }
+.main { display: flex; flex-direction: column; min-width: 0; padding: 38px 44px 26px; gap: 18px; overflow: hidden; position: relative; }
+.main > * { width: 100%; max-width: var(--col, 880px); }
+.thread { flex: 1; display: flex; flex-direction: column; gap: 26px; min-height: 0; }
+.pin { display: block; }
+.u { margin-left: auto; width: fit-content; max-width: 70%; font-size: 17px; padding: 13px 20px; }
+.turn { display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: start; min-width: 0; }
+.mascot { width: 44px; height: 44px; display: block; }
+.body { display: grid; gap: 16px; min-width: 0; }
+.tools { display: flex; flex-wrap: wrap; gap: 8px; }
+.tool { font: 500 13px var(--mono); padding: 6px 12px; display: inline-flex; gap: 7px; align-items: center; }
+.reply { font-size: 17.5px; line-height: 1.55; padding: 22px 26px; }
+.reply h3 { margin: 0 0 6px; }
+.reply p { margin: 0 0 10px }
+.reply table { width: 100%; border-collapse: collapse; font-size: 16px; }
+.reply td { padding: 9px 12px 9px 0; vertical-align: top; }
+.reply td:first-child { white-space: nowrap; font-weight: 600; padding-right: 22px; width: 1%; }
+.fix { padding: 20px 26px; display: grid; gap: 14px; font-size: 17px; position: relative; }
+.fix .lbl { font: 500 12px var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+.item { display: grid; grid-template-columns: 20px 1fr auto; gap: 12px; align-items: center; position: relative; }
+.box { width: 18px; height: 18px; display: block; }
+.ti { display: none; }
+.tag { font: 500 12px var(--mono); padding: 2px 9px; }
+.composer { font-size: 16px; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+.send { width: 34px; height: 34px; display: grid; place-items: center; flex: none; }
+.loader { display: none; align-items: center; gap: 14px; font-size: 15.5px; min-height: 40px; }
+[data-state="thinking"] .loader { display: flex; }
+[data-state="thinking"] .reply, [data-state="thinking"] .fix, [data-state="thinking"] .next { display: none; }
+.next .tool { cursor: pointer; }
+/* ================= Ghibli watercolour ================= */
+.D { --wall: #fbf3e0; --wall2: #ecdcbc; --sky: #bcd9ea; --leaf: #6f9a52; --leaf2: #4f7d3c; --wood: #9a7048; --line: #4a3428; --sun: #e7a63c; --txtD: #3a2c22;
+  background: radial-gradient(110% 80% at 70% 20%, var(--wall) 30%, var(--wall2)); color: var(--txtD); }
+.D .blooms { position: absolute; inset: 0; z-index: 0; pointer-events: none; filter: url(#wc); }
+.D .blooms i { position: absolute; border-radius: 50%; mix-blend-mode: multiply; opacity: .16; }
+.D .paper { position: absolute; inset: 0; z-index: 1; pointer-events: none; mix-blend-mode: multiply; opacity: .35;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' seed='6'/%3E%3CfeColorMatrix values='0 0 0 0 .62 0 0 0 0 .52 0 0 0 0 .38 0 0 0 -1.4 .95'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23p)'/%3E%3C/svg%3E"); }
+.D .skyband { position: absolute; left: 220px; right: 0; top: 0; height: 120px; z-index: 1; overflow: hidden;
+  background: linear-gradient(#a9cfe6, var(--sky) 70%, transparent); -webkit-mask-image: linear-gradient(#000 55%, transparent); mask-image: linear-gradient(#000 55%, transparent); }
+.D .cloud { position: absolute; width: 150px; height: 72px; filter: url(#wc) blur(.6px); opacity: .95;
+  background: radial-gradient(circle at 28% 60%, #fff 0 22px, transparent 23px), radial-gradient(circle at 50% 42%, #fff 0 28px, transparent 29px), radial-gradient(circle at 72% 58%, #fff 0 21px, transparent 22px), radial-gradient(ellipse 62px 16px at 50% 74%, #fff 98%, transparent);
+  animation: drift 60s linear infinite; }
+.D .cloud.c1 { top: 12px; animation-delay: -38s; }
+.D .cloud.c2 { top: 40px; transform: scale(.7); animation-duration: 80s; animation-delay: -20s; }
+.D .cloud.c3 { top: 18px; transform: scale(.85); animation-duration: 70s; animation-delay: -61s; }
+@keyframes drift { from { left: -140px } to { left: 105% } }
+.D .grass { position: absolute; left: 220px; right: 0; bottom: 0; height: 66px; z-index: 1; pointer-events: none; }
+.D .grass span { position: absolute; bottom: -2px; width: 4px; border-radius: 4px 4px 0 0; transform-origin: 50% 100%; animation: gust 3.2s ease-in-out infinite; }
+@keyframes gust { 0%, 100% { transform: rotate(-3deg) } 45% { transform: rotate(14deg) } }
+.D .dapple { position: absolute; z-index: 1; border-radius: 50%; pointer-events: none; mix-blend-mode: soft-light;
+  background: radial-gradient(circle, rgba(255,240,190,.95), transparent 68%); animation: dap 5s ease-in-out infinite; }
+@keyframes dap { 50% { opacity: .25; transform: translate(6px, 4px) } }
+.D .washy { position: relative; isolation: isolate; }
+.D .washy::before { content: ""; position: absolute; inset: 0; z-index: -1; filter: url(#wc); border-radius: 18px;
+  background: var(--w, rgba(255,252,243,.82)); box-shadow: inset 0 0 0 2px var(--edge, rgba(185,138,92,.35)), inset 0 0 20px var(--pool, rgba(185,138,92,.18)); }
+.D .side::before { content: ""; position: absolute; inset: 12px 6px 12px 10px; z-index: -1; filter: url(#wc); border-radius: 22px;
+  background: linear-gradient(rgba(185,138,92,.28), rgba(111,154,82,.22)); box-shadow: inset 0 0 0 2px rgba(120,86,50,.3); }
+.D .side { padding-left: 22px; padding-right: 18px; }
+.D .brand { margin-top: 6px; }
+.D .brand span { font-family: var(--serif); font-size: 28px; font-weight: 400; color: var(--line) }
+.D .nav.on { --w: rgba(231,166,60,.38); --edge: rgba(190,120,30,.5); font-weight: 600; }
+.D .nav .n { color: var(--leaf2) }
+.D .site { --w: rgba(255,252,243,.6); }
+.D .credits { color: var(--leaf2); margin-bottom: 8px; }
+.D .main { padding-top: 84px; }
+.D .thread { gap: 18px; }
+.D .reply td { padding-top: 7px; padding-bottom: 7px; }
+.D .u { --w: rgba(188,217,234,.75); --edge: rgba(90,140,180,.45); --pool: rgba(90,140,180,.25); }
+.D .tool { --w: rgba(255,252,243,.7); }
+.D .tool .ti { display: block; width: 9px; height: 9px; border-radius: 50%; background: var(--leaf); }
+.D .tool.run .ti { background: var(--sun); animation: pulse 1.2s infinite; }
+.D .tool { padding: 7px 14px; }
+.D .next .tool { --w: rgba(231,166,60,.18); --edge: rgba(190,120,30,.4); color: var(--line); }
+@keyframes pulse { 50% { opacity: .2 } }
+.D .reply h3 { font-family: var(--serif); font-weight: 400; font-size: 32px; margin: 0 0 6px; line-height: 1.05; color: var(--line); }
+.D .reply td { border-top: 1px dotted rgba(74,52,40,.35); }
+.D .fix { --w: rgba(111,154,82,.22); --edge: rgba(79,125,60,.5); --pool: rgba(79,125,60,.25); }
+.D .fix .lbl { color: var(--leaf2) }
+.D .box { border: 2px solid var(--line); border-radius: 6px; background: rgba(255,252,243,.8); position: relative; }
+.D .item.done .box { background: var(--leaf); }
+.D .item.done .box::after { content: ""; position: absolute; inset: -12px; border-radius: 50%; background: radial-gradient(circle, rgba(111,154,82,.45), transparent 65%); filter: url(#wc); animation: bloom 1.1s ease-out .8s both; }
+@keyframes bloom { from { transform: scale(.2); opacity: 0 } }
+.D .item.done .t2 { opacity: .7 }
+.D .tag { color: var(--line); background: rgba(255,252,243,.6); border-radius: 99px; }
+.D .composer { --w: rgba(255,252,243,.92); color: var(--wood); }
+.D .send { background: var(--sun); color: var(--line); border-radius: 50%; box-shadow: inset 0 -3px 0 rgba(150,90,20,.35); font-weight: 600; }
+.D .loader .drop { width: 30px; height: 30px; border-radius: 50%; background: rgba(90,140,180,.55); filter: url(#wc); animation: wet 1.8s ease-out infinite; }
+@keyframes wet { from { transform: scale(.2); opacity: 1 } to { transform: scale(1.4); opacity: 0 } }
+.D .loader span { font-family: var(--serif); font-style: italic; font-size: 21px; color: var(--wood) }
+.D .mascot .sway { transform-origin: 16px 28px; animation: wiggle 3s ease-in-out infinite; }
+@keyframes wiggle { 25% { transform: rotate(-6deg) } 75% { transform: rotate(5deg) } }
+@media (prefers-reduced-motion: reduce) { .screen *, .screen *::before, .screen *::after { animation: none !important; } }
+</style>
+</head>
+<body data-state="done">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><filter id="wc" x="-15%" y="-15%" width="130%" height="130%">
+  <feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="3" seed="12" result="n"/>
+  <feDisplacementMap in="SourceGraphic" in2="n" scale="8"/>
+  <feGaussianBlur stdDeviation=".7"/>
+</filter></defs></svg>
+<div class="screen D">
+  <div class="blooms" aria-hidden="true">
+    <i style="left:38%;top:16%;width:380px;height:280px;background:#f2d58a"></i>
+    <i style="left:66%;top:50%;width:340px;height:290px;background:#c9dcc0"></i>
+    <i style="left:16%;top:60%;width:300px;height:240px;background:#e9c2b4"></i>
+    <i style="left:78%;top:10%;width:260px;height:200px;background:#b9cfe0"></i>
+  </div>
+  <div class="paper" aria-hidden="true"></div>
+  <div class="skyband" aria-hidden="true"><span class="cloud c1"></span><span class="cloud c2"></span><span class="cloud c3"></span></div>
+  <span class="dapple" style="left:58%;top:30%;width:110px;height:110px" aria-hidden="true"></span>
+  <span class="dapple" style="left:84%;top:46%;width:80px;height:80px;animation-delay:-1.6s" aria-hidden="true"></span>
+  <span class="dapple" style="left:44%;top:72%;width:96px;height:96px;animation-delay:-3.1s" aria-hidden="true"></span>
+  <div class="grass" aria-hidden="true" id="grassD"></div>
+  <div class="app">
+    <aside class="side ">
+      <div class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="8" fill="#e7a63c" stroke="#4a3428" stroke-width="1.4"/><ellipse cx="16" cy="16" rx="14" ry="5" fill="none" stroke="#4f7d3c" stroke-width="1.8" transform="rotate(-20 16 16)"/></svg><span>orbit</span></div>
+      <div class="site washy"><span class="t">yourbrand.in</span><span class="t">&#9662;</span></div>
+      <div class="nav on washy"><span class="t">Chat</span></div>
+      <div class="nav"><span class="t">Action plan</span><span class="n">11</span></div>
+      <div class="nav"><span class="t">Documents</span><span class="n">4</span></div>
+      <div class="nav"><span class="t">Playbooks</span></div>
+      <div class="nav"><span class="t">Sites</span></div>
+      <div class="credits">81 credits</div>
+    </aside>
+    <main class="main">
+      <div class="thread">
+        <div class="pin"><div class="u washy">Why did my traffic drop last month?</div></div>
+        <div class="turn">
+          <svg class="mascot" viewBox="0 0 32 32" aria-hidden="true"><g class="sway">
+  <clipPath id="mcD"><path d="M16 3C8.8 3 3 8.2 3 14.6c0 3.5 1.7 6.6 4.5 8.7L6 29l6.4-3.4c1.1.3 2.4.4 3.6.4 7.2 0 13-5.2 13-11.4S23.2 3 16 3Z"/></clipPath>
+  <g clip-path="url(#mcD)"><rect width="32" height="32" fill="#c98426"/><path transform="translate(-2.2 -2)" fill="#f0b552" d="M16 3C8.8 3 3 8.2 3 14.6c0 3.5 1.7 6.6 4.5 8.7L6 29l6.4-3.4c1.1.3 2.4.4 3.6.4 7.2 0 13-5.2 13-11.4S23.2 3 16 3Z"/></g>
+  <path fill="none" stroke="#4a3428" stroke-width="1.5" d="M16 3C8.8 3 3 8.2 3 14.6c0 3.5 1.7 6.6 4.5 8.7L6 29l6.4-3.4c1.1.3 2.4.4 3.6.4 7.2 0 13-5.2 13-11.4S23.2 3 16 3Z"/>
+  <ellipse cx="12" cy="14" rx="2" ry="2.6" fill="#3a2c22"/><ellipse cx="20" cy="14" rx="2" ry="2.6" fill="#3a2c22"/><circle cx="12.7" cy="13.1" r=".7" fill="#fff"/><circle cx="20.7" cy="13.1" r=".7" fill="#fff"/>
+  <ellipse cx="9" cy="18" rx="1.8" ry="1" fill="#e98a6a" opacity=".6"/><ellipse cx="23" cy="18" rx="1.8" ry="1" fill="#e98a6a" opacity=".6"/>
+</g></svg>
+          <div class="body">
+            <div class="tools"><span class="tool ok washy"><i class="ti"></i>Search Console</span><span class="tool ok washy"><i class="ti"></i>SERP analysis</span><span class="tool run washy"><i class="ti"></i>Competitor pages</span></div>
+            <div class="loader"><span class="drop"></span><span>Letting the findings soak in&hellip;</span></div>
+            <div class="pin"><div class="reply washy">
+              <h3>Clicks fell 23%</h3>
+              <p>It isn't a penalty. Two of your pages compete for the same search, and the server is slow to answer.</p>
+              <table><tbody>
+                <tr><td>Pages competing</td><td>/blog/ai-receptionist and /compare target the same query</td></tr>
+                <tr><td>Speed</td><td>Server waits 1.8 s before sending the page</td></tr>
+                <tr><td>Lost rankings</td><td>&ldquo;ai receptionist&rdquo; slipped from #4 to #11 on mobile</td></tr>
+              </tbody></table>
+            </div></div>
+            <div class="pin"><div class="fix washy">
+              <span class="lbl">Fix this week</span>
+              <div class="item done"><span class="box "></span><span class="t2">Merge the two competing pages</span><span class="tag t-high">High</span></div>
+              <div class="item"><span class="box"></span><span class="t2">Add FAQ schema to pricing</span><span class="tag t-aeo">AEO</span></div>
+              <div class="item"><span class="box"></span><span class="t2">Compress hero images</span><span class="tag t-speed">Speed</span></div>
+            </div></div>
+            <div class="tools next"><span class="tool sug washy">Show both pages</span><span class="tool sug washy">Draft the redirect</span><span class="tool sug washy">Check speed again</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="pin"><div class="composer washy"><span>Ask in English or Hinglish&hellip;</span><span class="send">&#8593;</span></div></div>
+    </main>
+  </div>
+
+</div>
+<script>
+(() => {
+  // State: "done" by default; open with #thinking to see the loader state.
+  // Add "still" to the hash (#still, #thinking-still) to jump one-shot entrances to their end, for screenshots.
+  const state = location.hash.includes("thinking") ? "thinking" : "done";
+  document.body.dataset.state = state;
+  if (state === "done") document.querySelectorAll(".tool.run").forEach(t => t.classList.replace("run", "ok"));
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (location.hash.includes("still")) requestAnimationFrame(() => document.getAnimations().forEach(a => {
+    if (a.effect && a.effect.getComputedTiming().iterations !== Infinity) a.finish();
+  }));
+  function rand(seed) { return () => ((seed = (seed * 16807) % 2147483647) / 2147483647); }
+  // Grass blades; delay grows with x so each gust travels across as a wave.
+  const grass = document.getElementById("grassD"), gr = rand(31);
+  for (let k = 0; k < 170; k++) {
+    const b = document.createElement("span"), x = k / 170 * 100 + gr() * 0.8, h = 24 + gr() * 40;
+    b.style.cssText = `left:${x}%;height:${h}px;background:${gr() < .5 ? "#6f9a52" : "#4f7d3c"};opacity:${.55 + gr() * .4};animation-delay:${(-3.2 + x * 0.018).toFixed(2)}s`;
+    grass.appendChild(b);
+  }
+})();
+</script>
+</body>
+</html>
